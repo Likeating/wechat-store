@@ -11,8 +11,8 @@ import lombok.ToString;
 @ToString
 public class PropertyValue {
 
-  private long valueId;
-  private String valueName;
-  private long pictureId;
+  private java.math.BigInteger value_id;
+  private String value_name;
+  private java.math.BigInteger picture_id;
 
 }

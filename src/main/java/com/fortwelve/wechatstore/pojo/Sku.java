@@ -11,10 +11,10 @@ import lombok.ToString;
 @ToString
 public class Sku {
 
-  private long skuId;
-  private long productId;
+  private java.math.BigInteger sku_id;
+  private java.math.BigInteger product_id;
   private String entries;
-  private double skuPrice;
-  private long pictureId;
+  private java.math.BigDecimal sku_price;
+  private java.math.BigInteger picture_id;
 
 }

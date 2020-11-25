@@ -11,8 +11,8 @@ import lombok.ToString;
 @ToString
 public class PropertyKey {
 
-  private long keyId;
-  private String keyName;
-  private long isPicture;
+  private java.math.BigInteger key_id;
+  private String key_name;
+  private boolean isPicture;
 
 }
