@@ -11,13 +11,13 @@ import lombok.ToString;
 @ToString
 public class Product {
 
-  private long product_id;
+  private java.math.BigInteger product_id;
   private String product_name;
-  private double price;
-  private long category_id;
+  private java.math.BigDecimal price;
+  private int category_id;
   private java.sql.Timestamp add_time;
   private java.sql.Timestamp delete_time;
   private String state;
-  private long picture_id;
+  private java.math.BigInteger picture_id;
 
 }

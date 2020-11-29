@@ -14,9 +14,9 @@
     <name>wechat-store</name>
     <description>a wechat store</description>
 
-    <properties>
-        <java.version>11</java.version>
-    </properties>
+    <!--<properties>-->
+        <!--<java.version>11</java.version>-->
+    <!--</properties>-->
 
     <dependencies>
         <dependency>
@@ -27,6 +27,7 @@
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
             <!--<scope>runtime</scope>-->
+            <version>8.0.20</version>
         </dependency>
         <dependency>
             <groupId>org.mybatis.spring.boot</groupId>
