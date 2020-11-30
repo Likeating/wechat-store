@@ -5,16 +5,19 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
 public class Sku {
 
-  private java.math.BigInteger sku_id;
-  private java.math.BigInteger product_id;
-  private String entries;
-  private java.math.BigDecimal sku_price;
-  private java.math.BigInteger picture_id;
+  private BigInteger sku_id;
+  private BigInteger product_id;
+  private String properties;
+  private BigDecimal sku_price;
+  private BigInteger picture_id;
 
 }

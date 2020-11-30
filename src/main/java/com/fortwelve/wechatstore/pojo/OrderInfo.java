@@ -5,20 +5,24 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.sql.Timestamp;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
 public class OrderInfo {
 
-  private java.math.BigInteger order_id;
-  private java.math.BigInteger customer_id;
-  private java.math.BigDecimal total_price;
-  private java.math.BigDecimal freight_price;
-  private java.math.BigDecimal pay_price;
+  private BigInteger order_id;
+  private BigInteger customer_id;
+  private BigDecimal total_price;
+  private BigDecimal freight_price;
+  private BigDecimal pay_price;
   private String address;
   private int order_status;
-  private java.sql.Timestamp create_time;
+  private Timestamp create_time;
   private String note;
 
 }

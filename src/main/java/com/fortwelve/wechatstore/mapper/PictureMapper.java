@@ -3,6 +3,7 @@ package com.fortwelve.wechatstore.mapper;
 import com.fortwelve.wechatstore.pojo.Picture;
 import org.apache.ibatis.annotations.*;
 
+import java.math.BigInteger;
 import java.util.List;
 
 @Mapper
@@ -13,10 +14,10 @@ public interface PictureMapper {
     public int addPicture(Picture picture);
 
     @Delete("delete from picture where picture_id=#{picture_id}")
-    public int deletePictureById(java.math.BigInteger id);
+    public int deletePictureById(BigInteger id);
 
     @Select("select * from picture where picture_id = #{id}")
-    public Picture getPictureById(java.math.BigInteger id);
+    public Picture getPictureById(BigInteger id);
 
     @Select("select * from picture")
     public List<Picture> getAllPicture();

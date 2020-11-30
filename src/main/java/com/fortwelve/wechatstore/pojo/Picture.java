@@ -5,13 +5,15 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+import java.math.BigInteger;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
 public class Picture {
 
-  private java.math.BigInteger picture_id;
+  private BigInteger picture_id;
   private String url;
 
 }
