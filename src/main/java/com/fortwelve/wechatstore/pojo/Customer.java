@@ -5,6 +5,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+import java.math.BigInteger;
+
 
 @Data
 @AllArgsConstructor
@@ -12,7 +14,7 @@ import lombok.ToString;
 @ToString
 public class Customer {
 
-  private java.math.BigInteger customer_id;
+  private BigInteger customer_id;
   private String customer_name;
 
 }

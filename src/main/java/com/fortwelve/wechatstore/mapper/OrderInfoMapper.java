@@ -3,6 +3,7 @@ package com.fortwelve.wechatstore.mapper;
 import com.fortwelve.wechatstore.pojo.OrderInfo;
 import org.apache.ibatis.annotations.*;
 
+import java.math.BigInteger;
 import java.util.List;
 
 @Mapper
@@ -16,10 +17,10 @@ public interface OrderInfoMapper {
     public int updateOrderInfo(OrderInfo orderInfo);
 
     @Delete("delete from order_info where order_id=#{id}")
-    public int deleteOrderInfoById(java.math.BigInteger id);
+    public int deleteOrderInfoById(BigInteger id);
 
     @Select("select * from order_info where order_id = #{id}")
-    public OrderInfo getOrderInfoById(java.math.BigInteger id);
+    public OrderInfo getOrderInfoById(BigInteger id);
 
     @Select("select * from order_info")
     public List<OrderInfo> getAllOrderInfo();
