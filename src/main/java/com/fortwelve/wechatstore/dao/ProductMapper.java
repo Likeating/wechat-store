@@ -1,4 +1,4 @@
-package com.fortwelve.wechatstore.mapper;
+package com.fortwelve.wechatstore.dao;
 
 import com.fortwelve.wechatstore.pojo.Product;
 import org.apache.ibatis.annotations.*;

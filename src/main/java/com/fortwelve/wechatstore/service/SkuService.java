@@ -1,6 +1,6 @@
 package com.fortwelve.wechatstore.service;
 
-import com.fortwelve.wechatstore.mapper.SkuMapper;
+import com.fortwelve.wechatstore.dao.SkuMapper;
 import com.fortwelve.wechatstore.pojo.Sku;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

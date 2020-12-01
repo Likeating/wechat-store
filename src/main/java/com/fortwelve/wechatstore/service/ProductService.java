@@ -1,6 +1,6 @@
 package com.fortwelve.wechatstore.service;
 
-import com.fortwelve.wechatstore.mapper.ProductMapper;
+import com.fortwelve.wechatstore.dao.ProductMapper;
 import com.fortwelve.wechatstore.pojo.Product;
 import org.springframework.beans.factory.annotation.Autowired;
 

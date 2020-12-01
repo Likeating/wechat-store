@@ -1,6 +1,6 @@
 package com.fortwelve.wechatstore.service;
 
-import com.fortwelve.wechatstore.mapper.PropertyValueMapper;
+import com.fortwelve.wechatstore.dao.PropertyValueMapper;
 import com.fortwelve.wechatstore.pojo.PropertyValue;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

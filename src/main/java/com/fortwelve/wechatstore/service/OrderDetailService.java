@@ -1,6 +1,6 @@
 package com.fortwelve.wechatstore.service;
 
-import com.fortwelve.wechatstore.mapper.OrderDetailMapper;
+import com.fortwelve.wechatstore.dao.OrderDetailMapper;
 import com.fortwelve.wechatstore.pojo.OrderDetail;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

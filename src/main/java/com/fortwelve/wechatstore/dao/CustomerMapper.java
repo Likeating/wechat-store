@@ -1,8 +1,10 @@
-package com.fortwelve.wechatstore.mapper;
+package com.fortwelve.wechatstore.dao;
 
 import com.fortwelve.wechatstore.pojo.Customer;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.*;
+
+import java.math.BigInteger;
+import java.util.List;
 
 @Mapper
 public interface CustomerMapper {

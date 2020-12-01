@@ -1,6 +1,6 @@
 package com.fortwelve.wechatstore.service;
 
-import com.fortwelve.wechatstore.mapper.PictureMapper;
+import com.fortwelve.wechatstore.dao.PictureMapper;
 import com.fortwelve.wechatstore.pojo.Picture;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
