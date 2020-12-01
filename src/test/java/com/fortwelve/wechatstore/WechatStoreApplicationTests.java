@@ -1,6 +1,6 @@
 package com.fortwelve.wechatstore;
 
-import com.fortwelve.wechatstore.mapper.*;
+import com.fortwelve.wechatstore.dao.*;
 import com.fortwelve.wechatstore.pojo.*;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,8 +11,6 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.sql.Time;
-import java.sql.Timestamp;
 
 @SpringBootTest
 class WechatStoreApplicationTests {
