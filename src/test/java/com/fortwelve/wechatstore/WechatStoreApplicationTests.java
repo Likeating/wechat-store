@@ -1,7 +1,10 @@
 package com.fortwelve.wechatstore;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fortwelve.wechatstore.dao.*;
 import com.fortwelve.wechatstore.pojo.*;
+import com.fortwelve.wechatstore.service.ProductService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -11,6 +14,10 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @SpringBootTest
 class WechatStoreApplicationTests {
@@ -32,6 +39,8 @@ class WechatStoreApplicationTests {
     @Autowired
     SkuMapper skuMapper;
 
+    @Autowired
+    ProductService productService;
 
 
 
@@ -50,8 +59,10 @@ class WechatStoreApplicationTests {
         System.out.println(categoryMapper.getCategoryById(2));
 
         Category category = new Category();
-        category.setCategory_name("分类名");
+        category.setCategory_name("'\"分类名\"'");
 //        System.out.println(categoryMapper.addCategory(category));
+//        System.out.println(categoryMapper.getCategoryById(category.getCategory_id()));
+//
 //        System.out.println(categoryMapper.getAllCategory());
 //        Category category2 = new Category();
 //        category2.setCategory_id(8);
@@ -169,10 +180,18 @@ class WechatStoreApplicationTests {
 //        System.out.println(productMapper.getProductPage(2, 10));
 
 //        System.out.println(productMapper.deleteProductById(BigInteger.valueOf(4l)));
-        Product product = productMapper.getProductById(BigInteger.valueOf(5l));
-        product.setProduct_name("修改过的");
-        product.setPrice(BigDecimal.valueOf(59.9));
-        System.out.println(productMapper.updateProduct(product));
+        List<String> keywords = new ArrayList<>();
+        keywords.add("男");
+        keywords.add("条纹");
+        List<Product> products = productService.searchProductPage(keywords, 0, 5);
+        System.out.println(products.size());
+        System.out.println(products);
+//        System.out.println(productMapper.searchProductPage(keywords, 0, 5));
+//        System.out.println(productMapper.searchProductPage2("男"));
+//        Product product = productMapper.getProductById(BigInteger.valueOf(5l));
+//        product.setProduct_name("修改过的");
+//        product.setPrice(BigDecimal.valueOf(59.9));
+//        System.out.println(productMapper.updateProduct(product));
     }
 
     @Test
@@ -191,5 +210,32 @@ class WechatStoreApplicationTests {
         skuMapper.updateSku(sku);
         System.out.println(skuMapper.deleteSkuById(BigInteger.valueOf(4)));
     }
+    @Test
+    void testJackson(){
+        ObjectMapper mapper = new ObjectMapper();
+        Map<String,Object> map = new HashMap<>();
+        Map<String,Object> msgbody = new HashMap<>();
+        Map<String,Object> meta = new HashMap<>();
+        List<Object> msg = new ArrayList<>();
 
+        System.out.println("接受");
+        msgbody.put("image_src","https://api-hmugo-web.itheima.net/pyg/banner1.png");
+        msgbody.put("open_type","navigate");
+        msgbody.put("goods_id",129);
+        msgbody.put("navigator_url","/pages/goods_detail/index?goods_id=129");
+        msg.add(msgbody);
+
+        meta.put("msg","获取成功");
+        meta.put("status",200);
+
+        map.put("message",msg);
+        map.put("meta",meta);
+        try {
+            String str=mapper.writeValueAsString(map);
+            System.out.println(str);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+
+    }
 }

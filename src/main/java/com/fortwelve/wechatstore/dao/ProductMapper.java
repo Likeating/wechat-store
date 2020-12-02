@@ -28,4 +28,14 @@ public interface ProductMapper {
     @Update("update product set product_name=#{product_name},price=#{price},category_id=#{category_id},add_time=#{add_time},delete_time=#{delete_time},state=#{state},picture_id=#{picture_id} where product_id=#{product_id}")
     public int updateProduct(Product product);
 
+    @Select("<script>"+
+            "select * from product where"+
+            "<foreach item='keyword' collection='keywords' separator='and'>"+
+            "product_name like concat('%',#{keyword},'%')"+
+            "</foreach>"+
+            "limit #{offset},#{rows}"+
+            "</script>"
+    )
+    public List<Product> searchProductPage(List<String> keywords,int offset,int rows);
+
 }

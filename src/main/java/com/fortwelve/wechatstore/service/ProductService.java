@@ -3,10 +3,12 @@ package com.fortwelve.wechatstore.service;
 import com.fortwelve.wechatstore.dao.ProductMapper;
 import com.fortwelve.wechatstore.pojo.Product;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.math.BigInteger;
 import java.util.List;
 
+@Service
 public class ProductService {
     @Autowired
     ProductMapper productMapper;
@@ -36,5 +38,9 @@ public class ProductService {
 
     public int updateProduct(Product product){
         return productMapper.updateProduct(product);
+    }
+
+    public List<Product> searchProductPage(List<String> keywords,int offset,int rows){
+        return productMapper.searchProductPage(keywords,offset,rows);
     }
 }
