@@ -27,6 +27,18 @@ public class HomeController {
         msgbody.put("navigator_url","/pages/goods_detail/index?goods_id=129");
         msg.add(msgbody);
 
+        msgbody.put("image_src","https://api-hmugo-web.itheima.net/pyg/banner2.png");
+        msgbody.put("open_type","navigate");
+        msgbody.put("goods_id",130);
+        msgbody.put("navigator_url","/pages/goods_detail/index?goods_id=130");
+        msg.add(msgbody);
+
+        msgbody.put("image_src","https://api-hmugo-web.itheima.net/pyg/banner3.png");
+        msgbody.put("open_type","navigate");
+        msgbody.put("goods_id",131);
+        msgbody.put("navigator_url","/pages/goods_detail/index?goods_id=131");
+        msg.add(msgbody);
+
         meta.put("msg","获取成功");
         meta.put("status",200);
 
@@ -35,4 +47,6 @@ public class HomeController {
 
         return map;
     }
+
+
 }
