@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fortwelve.wechatstore.dao.*;
 import com.fortwelve.wechatstore.pojo.*;
 import com.fortwelve.wechatstore.service.ProductService;
+import com.fortwelve.wechatstore.service.SkuService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -38,7 +39,8 @@ class WechatStoreApplicationTests {
     ProductMapper productMapper;
     @Autowired
     SkuMapper skuMapper;
-
+    @Autowired
+    SkuService skuService;
     @Autowired
     ProductService productService;
 
@@ -203,13 +205,27 @@ class WechatStoreApplicationTests {
 //        sku.setSku_price(BigDecimal.valueOf(59.9));
 //        skuMapper.addSku(sku);
 //        System.out.println("skuid:"+sku.getSku_id());
-        System.out.println(skuMapper.getAllSku());
-        sku = skuMapper.getSkuById(BigInteger.valueOf(5));
-        System.out.println(sku);
-        sku.setSku_price(BigDecimal.valueOf(9.9));
-        skuMapper.updateSku(sku);
-        System.out.println(skuMapper.deleteSkuById(BigInteger.valueOf(4)));
+//        System.out.println(skuMapper.getAllSku());
+//        sku = skuMapper.getSkuById(BigInteger.valueOf(5));
+//        System.out.println(sku);
+//        sku.setSku_price(BigDecimal.valueOf(9.9));
+//        skuMapper.updateSku(sku);
+//        System.out.println(skuMapper.deleteSkuById(BigInteger.valueOf(4)));
+//        System.out.println(skuService.getSkuByProductId(BigInteger.valueOf(2)));
+        Map<String,String> map=new HashMap<>();
+
+        String str1="123";
+        String str2=new String("123");
+        System.out.println(str1==str2+":相同判断");
+
+
+        map.put(str1,"a");
+        map.put("2","b");
+        map.put(str2,"111");
+        System.out.println(map);
+
     }
+
     @Test
     void testJackson(){
         ObjectMapper mapper = new ObjectMapper();

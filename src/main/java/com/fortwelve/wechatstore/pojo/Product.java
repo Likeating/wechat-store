@@ -23,5 +23,7 @@ public class Product {
   private Timestamp delete_time;
   private String state;
   private BigInteger picture_id;
+  private BigInteger preview_id;
+  private BigInteger detail_id;
 
 }

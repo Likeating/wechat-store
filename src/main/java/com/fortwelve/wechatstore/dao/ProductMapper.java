@@ -9,7 +9,7 @@ import java.util.List;
 @Mapper
 public interface ProductMapper {
 
-    @Insert("insert into product (product_name,price,category_id,add_time,delete_time,state,picture_id) values (#{product_name},#{price},#{category_id},#{add_time},#{delete_time},#{state},#{picture_id})")
+    @Insert("insert into product (product_name,price,category_id,add_time,delete_time,state,picture_id,preview_id,detail_id) values (#{product_name},#{price},#{category_id},#{add_time},#{delete_time},#{state},#{picture_id},#{preview_id},#{detail_id})")
     @Options(useGeneratedKeys = true,keyProperty = "product_id",keyColumn = "product_id")
     public int addProduct(Product product);
 
@@ -25,7 +25,7 @@ public interface ProductMapper {
     @Delete("delete from product where product_id=#{id}")
     public int deleteProductById(BigInteger id);
 
-    @Update("update product set product_name=#{product_name},price=#{price},category_id=#{category_id},add_time=#{add_time},delete_time=#{delete_time},state=#{state},picture_id=#{picture_id} where product_id=#{product_id}")
+    @Update("update product set product_name=#{product_name},price=#{price},category_id=#{category_id},add_time=#{add_time},delete_time=#{delete_time},state=#{state},picture_id=#{picture_id},preview_id=#{preview_id},detail_id=#{detail_id} where product_id=#{product_id}")
     public int updateProduct(Product product);
 
     @Select("<script>"+

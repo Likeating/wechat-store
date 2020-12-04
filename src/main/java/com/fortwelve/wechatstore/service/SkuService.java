@@ -27,4 +27,8 @@ public class SkuService {
     public List<Sku> getAllSku(){
         return skuMapper.getAllSku();
     }
+    public List<Sku> getSkuByProductId(BigInteger product_id){
+        return skuMapper.getSkuByProductId(product_id);
+    }
+
 }
