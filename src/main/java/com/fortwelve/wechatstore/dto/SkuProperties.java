@@ -1,4 +1,4 @@
-package com.fortwelve.wechatstore.bean;
+package com.fortwelve.wechatstore.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

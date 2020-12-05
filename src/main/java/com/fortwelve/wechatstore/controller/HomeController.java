@@ -17,7 +17,6 @@ public class HomeController {
         Map<String,Object> meta = new HashMap<>();
         List<Object> msg = new ArrayList<>();
 
-        System.out.println("接受");
         msgbody.put("image_src","https://api-hmugo-web.itheima.net/pyg/banner1.png");
         msgbody.put("open_type","navigate");
         msgbody.put("goods_id",129);

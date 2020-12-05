@@ -1,7 +1,7 @@
 package com.fortwelve.wechatstore.util;
 
-import com.fortwelve.wechatstore.bean.ProductProperties;
-import com.fortwelve.wechatstore.bean.SkuProperties;
+import com.fortwelve.wechatstore.dto.ProductProperties;
+import com.fortwelve.wechatstore.dto.SkuProperties;
 import com.fortwelve.wechatstore.pojo.Picture;
 import com.fortwelve.wechatstore.pojo.Product;
 import com.fortwelve.wechatstore.pojo.Sku;

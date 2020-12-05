@@ -1,12 +1,13 @@
 package com.fortwelve.wechatstore.controller;
 
 
-import com.fortwelve.wechatstore.bean.ProductProperties;
-import com.fortwelve.wechatstore.bean.SkuProperties;
+import com.fortwelve.wechatstore.dto.ProductProperties;
+import com.fortwelve.wechatstore.dto.SkuProperties;
 import com.fortwelve.wechatstore.pojo.*;
 import com.fortwelve.wechatstore.service.*;
 import com.fortwelve.wechatstore.util.GoodsFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -34,7 +35,14 @@ public class GoodsController {
     PropertyValueService propertyValueService;
 
     @RequestMapping("/search")
-    public Object search(String query,String cid,int pagenum,int pagesize){
+    public Object search(@RequestBody Map<String,Object> map2){
+        System.out.println(map2);
+
+        String query=(String)map2.get("query");
+        String cid=(String)map2.get("cid");
+        int pagenum=(int)map2.get("pagenum");
+        int pagesize=(int)map2.get("pagesize");
+        System.out.println(query);
         Map<String,Object> map = new HashMap<>();
         Map<String,Object> meta = new HashMap<>();
         Map<String,Object> msg = new HashMap<>();
