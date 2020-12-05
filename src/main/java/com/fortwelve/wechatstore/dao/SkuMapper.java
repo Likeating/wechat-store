@@ -28,4 +28,7 @@ public interface SkuMapper {
     @Select("select * from sku where product_id=#{product_id} order by sku_id asc")
     public List<Sku> getSkuByProductId(BigInteger product_id);
 
+    @Select("select sum(stock) from sku where product_id=#{product_id}")
+    public int getStockByProductId(BigInteger product_id);
+
 }

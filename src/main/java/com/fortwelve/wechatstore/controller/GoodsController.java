@@ -21,28 +21,10 @@ public class GoodsController {
 
     @Autowired
     ProductService productService;
-    @Autowired
-    PictureService pictureService;
-    @Autowired
-    PictureListService pictureListService;
-    @Autowired
-    SkuService skuService;
-    @Autowired
-    GoodsFactory goodsFactory;
-    @Autowired
-    PropertyKeyService propertyKeyService;
-    @Autowired
-    PropertyValueService propertyValueService;
 
     @RequestMapping("/search")
-    public Object search(@RequestBody Map<String,Object> map2){
-        System.out.println(map2);
+    public Object search(String query,String cid,int pagenum,int pagesize){
 
-        String query=(String)map2.get("query");
-        String cid=(String)map2.get("cid");
-        int pagenum=(int)map2.get("pagenum");
-        int pagesize=(int)map2.get("pagesize");
-        System.out.println(query);
         Map<String,Object> map = new HashMap<>();
         Map<String,Object> meta = new HashMap<>();
         Map<String,Object> msg = new HashMap<>();
@@ -53,22 +35,15 @@ public class GoodsController {
                 throw new Exception();
             }
             List<String> keywords =Arrays.asList(str.split("\\s+"));
-
-            List<Product> products = productService.searchProductPage(keywords,pagenum,pagesize);
+            List<ProductProperties> productPropertiesList = productService.searchProductPage(keywords,pagenum,pagesize);
 
             meta.put("msg","获取成功");
             meta.put("status",200);
 
             msg.put("pagenum",pagenum);
-            String url;
-            ProductProperties goods;
-            List<ProductProperties> goodsList = new LinkedList<>();
-            for (Product product : products){
-                goods = goodsFactory.getProductProperties(product,pictureService.getPictureById(product.getPicture_id()),100);
-                goodsList.add(goods);
-            }
-            msg.put("total",goodsList.size());
-            msg.put("goods",goodsList);
+
+            msg.put("total",productPropertiesList.size());
+            msg.put("product",productPropertiesList);
             map.put("message",msg);
         }catch (Exception e){
             meta.put("msg","获取失败");
@@ -82,65 +57,9 @@ public class GoodsController {
         Map<String,Object> map = new HashMap<>();
         Map<String,Object> meta = new HashMap<>();
         Map<String,Object> msg = new HashMap<>();
-        List<String> previews = new LinkedList<>();
-        List<String> pics = new LinkedList<>();
-        Map<String,String> keys = new HashMap<>();
-        Map<String,String> values = new HashMap<>();
-        List<SkuProperties> skuPropertiesList = new LinkedList<>();
-        SkuProperties skuProperties;
-        int stock = 0;
+
         try {
-
-            Product product=productService.getProductById(BigInteger.valueOf(goods_id));
-            PictureList previewList = pictureListService.getProductDetailById(product.getPreview_id());
-            PictureList detailList = pictureListService.getProductDetailById(product.getDetail_id());
-
-            //获取预览图集
-            String [] previewArray = previewList.getPictures_id().split("_");
-            if (previewArray.length>0){
-                for(String pid : previewArray){
-                    previews.add(pictureService.getPictureById(new BigInteger(pid)).getUrl());
-                }
-            }
-            //获取商品详情图集
-            String [] detailArray = detailList.getPictures_id().split("_");
-            if (detailArray.length>0){
-                for(String pid : detailArray){
-                    pics.add(pictureService.getPictureById(new BigInteger(pid)).getUrl());
-                }
-            }
-
-            //获取sku
-            List<Sku> skuList = skuService.getSkuByProductId(product.getProduct_id());
-            String [] propertiesArray;
-            String [] kv;
-            String key,value;
-            for(Sku sku:skuList){
-                propertiesArray=sku.getProperties().split("_");
-                for(String property:propertiesArray){
-                    kv = property.split(":");
-                    if(keys.get(kv[0])==null){
-                        key = propertyKeyService.getPropertyKeyById(new BigInteger(kv[0])).getKey_name();
-                        keys.put(kv[0],key);
-                    }
-                    if(values.get(kv[1])==null){
-                        value = propertyValueService.getPropertyValueById(new BigInteger(kv[1])).getValue_name();
-                        values.put(kv[1],value);
-                    }
-                }
-                skuProperties = goodsFactory.getSkuProperties(sku,pictureService.getPictureById(sku.getPicture_id()));
-                skuPropertiesList.add(skuProperties);
-                stock += sku.getStock();
-            }
-            ProductProperties goods = goodsFactory.getProductProperties(product,pictureService.getPictureById(product.getPicture_id()),stock);
-            msg.put("skuList",skuPropertiesList);
-            msg.put("keyList",keys);
-            msg.put("valueList",values);
-
-            msg.put("goods",goods);
-            msg.put("previews",previews);
-            msg.put("pics",pics);
-
+            msg.put("productDetail",productService.getProductDetail(BigInteger.valueOf(goods_id)));
             meta.put("msg","获取成功");
             meta.put("status",200);
         }catch (Exception e){

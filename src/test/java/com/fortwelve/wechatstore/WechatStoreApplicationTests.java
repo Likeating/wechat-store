@@ -1,9 +1,11 @@
 package com.fortwelve.wechatstore;
 
-import com.fortwelve.wechatstore.service.CategoryService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+
+import java.util.LinkedList;
+import java.util.List;
 
 @SpringBootTest
 class WechatStoreApplicationTests {
@@ -239,10 +241,15 @@ class WechatStoreApplicationTests {
         }
 
     }*/
-   @Autowired
-   CategoryService categoryService;
+
    @Test
-   public void Test(){
-       System.out.println(categoryService.getAllCategory());
+   public void Test() {
+      List<String> s = new LinkedList<>();
+      s.add("123");
+      s.add("456");
+      s.add("789");
+      s.forEach((sss)->{
+         System.out.println(sss);
+      });
    }
 }
