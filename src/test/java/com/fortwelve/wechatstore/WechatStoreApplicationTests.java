@@ -1,29 +1,14 @@
 package com.fortwelve.wechatstore;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fortwelve.wechatstore.dao.*;
-import com.fortwelve.wechatstore.pojo.*;
-import com.fortwelve.wechatstore.service.ProductService;
-import com.fortwelve.wechatstore.service.SkuService;
+import com.fortwelve.wechatstore.service.CategoryService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import javax.sql.DataSource;
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 @SpringBootTest
 class WechatStoreApplicationTests {
 
-    @Autowired
+   /* @Autowired
     DataSource dataSource;
     @Autowired
     CustomerMapper customerMapper;
@@ -253,5 +238,11 @@ class WechatStoreApplicationTests {
             e.printStackTrace();
         }
 
-    }
+    }*/
+   @Autowired
+   CategoryService categoryService;
+   @Test
+   public void Test(){
+       System.out.println(categoryService.getAllCategory());
+   }
 }
