@@ -1,0 +1,8 @@
+JWTUtils:
+  minute: 30
+  signature: "qiumingzhenshuai"
+
+WXApi:
+  appid: "wx7ba9c5031955766f"
+  secret: "283c6c34a2344d044e4b8229cc1bda2d"
+

@@ -2,12 +2,8 @@ package com.fortwelve.wechatstore.controller;
 
 
 import com.fortwelve.wechatstore.dto.ProductProperties;
-import com.fortwelve.wechatstore.dto.SkuProperties;
-import com.fortwelve.wechatstore.pojo.*;
 import com.fortwelve.wechatstore.service.*;
-import com.fortwelve.wechatstore.util.GoodsFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -46,8 +42,8 @@ public class GoodsController {
             msg.put("product",productPropertiesList);
             map.put("message",msg);
         }catch (Exception e){
-            meta.put("msg","获取失败");
-            meta.put("status",400);//随便定义的
+            meta.put("msg","服务器出错。");
+            meta.put("status",500);//随便定义的
         }
         map.put("meta",meta);
         return map;
@@ -63,8 +59,8 @@ public class GoodsController {
             meta.put("msg","获取成功");
             meta.put("status",200);
         }catch (Exception e){
-            meta.put("msg","获取失败");
-            meta.put("status",400);
+            meta.put("msg","服务器出错。");
+            meta.put("status",500);
         }
         map.put("meta",meta);
         map.put("msg",msg);

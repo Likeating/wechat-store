@@ -1,11 +1,19 @@
 package com.fortwelve.wechatstore;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fortwelve.wechatstore.dto.UserInfo;
+import com.fortwelve.wechatstore.service.CustomerService;
+import com.fortwelve.wechatstore.util.WXapi;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.util.LinkedList;
-import java.util.List;
+import java.io.IOException;
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 @SpringBootTest
 class WechatStoreApplicationTests {
@@ -241,15 +249,26 @@ class WechatStoreApplicationTests {
         }
 
     }*/
+   @Autowired
+   private WXapi wxapi;
+   @Autowired
+   CustomerService customerService;
+@Value("${JWTUtils.minute}")
+int minute;
+    @Test
+    void Test01() throws IOException, NoSuchAlgorithmException {
+        String rawData = "{\"nickName\":\"Jason\",\"gender\":1,\"language\":\"zh_CN\",\"city\":\"\",\"province\":\"Van\",\"country\":\"Turkey\",\"avatarUrl\":\"https://thirdwx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTKolFX0XdToWC96ehuMmVL3MC5Tic4iaDFicJCHF9Q47uw60ibwUHppkuF45nbKhS7kAfeUp1xEVtp4KA/132\"}";
+        rawData=rawData+"a9xluJbwVSx6EjuxZEbTqw==";
+        System.out.println(wxapi.getSHA1("{\"nickName\":\"Band\",\"gender\":1,\"language\":\"zh_CN\",\"city\":\"Guangzhou\",\"province\":\"Guangdong\",\"country\":\"CN\",\"avatarUrl\":\"http://wx.qlogo.cn/mmopen/vi_32/1vZvI39NWFQ9XM4LtQpFrQJ1xlgZxx3w7bQxKARol6503Iuswjjn6nIGBiaycAjAtpujxyzYsrztuuICqIM5ibXQ/0\"}HyVFkGl5F5OQWJZZaNzBBg=="));
+        //System.out.println(wxApi.Code2Session("081Thkml22md964TMMkl2iuAvw4ThkmG"));
+        //System.out.println(objectMapper.readValue("{\"errcode\":40163,\"errmsg\":\"code been used, hints: [ req_id: 6heFeKqge-A0M3HA ]\"}".getBytes(), Code2Session.class));
+    }
+    @Test
+    void user () throws JsonProcessingException {
+//        System.out.println(customerService.getCustomerByOpenId("1232"));
+        ObjectMapper objectMapper = new ObjectMapper();
+        String src = "{\"nickName\":\"Jason\",\"gender\":1,\"language\":\"zh_CN\",\"city\":\"\",\"province\":\"Van\",\"country\":\"Turkey\",\"avatarUrl\":\"https://thirdwx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTKolFX0XdToWC96ehuMmVL3MC5Tic4iaDFicJCHF9Q47uw60ibwUHppkuF45nbKhS7kAfeUp1xEVtp4KA/132\"}";
+        System.out.println(objectMapper.readValue(src, UserInfo.class));
 
-   @Test
-   public void Test() {
-      List<String> s = new LinkedList<>();
-      s.add("123");
-      s.add("456");
-      s.add("789");
-      s.forEach((sss)->{
-         System.out.println(sss);
-      });
-   }
+    }
 }

@@ -1,4 +1,4 @@
-package com.fortwelve.wechatstore.service;
+package com.fortwelve.wechatstore.service.Impl;
 
 import com.fortwelve.wechatstore.dao.*;
 import com.fortwelve.wechatstore.dto.ProductDetail;
@@ -8,6 +8,7 @@ import com.fortwelve.wechatstore.pojo.Picture;
 import com.fortwelve.wechatstore.pojo.PictureList;
 import com.fortwelve.wechatstore.pojo.Product;
 import com.fortwelve.wechatstore.pojo.Sku;
+import com.fortwelve.wechatstore.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
