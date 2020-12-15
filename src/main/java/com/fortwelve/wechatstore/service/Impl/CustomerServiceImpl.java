@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigInteger;
+import java.sql.Timestamp;
+import java.util.Calendar;
 import java.util.List;
 
 @Service
@@ -18,6 +20,8 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public int addCustomer(Customer customer) {
+        Calendar calendar = Calendar.getInstance();
+        customer.setCreate_time(new Timestamp(calendar.getTimeInMillis()));
         return customerMapper.addCustomer(customer);
     }
 
@@ -47,7 +51,7 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public UserInfo getUserInfo(Customer customer) {
+    public UserInfo CustomerToUserInfo(Customer customer) {
         UserInfo userInfo = new UserInfo(
                 customer.getCustomer_id(),
                 customer.getNickName(),
@@ -60,5 +64,22 @@ public class CustomerServiceImpl implements CustomerService {
                 customer.getCreate_time()
         );
         return userInfo;
+    }
+
+    @Override
+    public Customer UserInfoToCustomer(UserInfo userInfo,String openid) {
+
+        return new Customer(
+                userInfo.getUserId(),
+                openid,
+                userInfo.getNickName(),
+                userInfo.getGender(),
+                userInfo.getLanguage(),
+                userInfo.getCity(),
+                userInfo.getProvince(),
+                userInfo.getCountry(),
+                userInfo.getAvatarUrl(),
+                userInfo.getCreate_time()
+        );
     }
 }

@@ -34,6 +34,36 @@ public class ProductServiceImpl implements ProductService {
     PropertyValueMapper propertyValueMapper;
 
     @Override
+    public int addProduct(Product product) {
+        return productMapper.addProduct(product);
+    }
+
+    @Override
+    public Product getProductById(BigInteger id) {
+        return productMapper.getProductById(id);
+    }
+
+    @Override
+    public List<Product> getAllProduct() {
+        return productMapper.getAllProduct();
+    }
+
+    @Override
+    public List<Product> getProductPage(int offset, int rows) {
+        return productMapper.getProductPage(offset,rows);
+    }
+
+    @Override
+    public int deleteProductById(BigInteger id) {
+        return productMapper.deleteProductById(id);
+    }
+
+    @Override
+    public int updateProduct(Product product) {
+        return productMapper.updateProduct(product);
+    }
+
+    @Override
     public ProductProperties getProductProperties(Product product) {
         return new ProductProperties(product.getProduct_id(),
                 product.getProduct_name(),

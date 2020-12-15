@@ -21,7 +21,7 @@ public interface CustomerService {
 
     Customer getCustomerByOpenId(String openid);
 
-    UserInfo getUserInfo(Customer customer);
+    UserInfo CustomerToUserInfo(Customer customer);
 
-//    UserInfo getUserInfo(Customer customer);
+    Customer UserInfoToCustomer(UserInfo userInfo,String openid);
 }

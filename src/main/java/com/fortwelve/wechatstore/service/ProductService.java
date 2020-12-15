@@ -12,9 +12,48 @@ import java.util.List;
 
 public interface ProductService {
 
+    int addProduct(Product product);
+    Product getProductById(BigInteger id);
+    List<Product> getAllProduct();
+    List<Product> getProductPage(int offset,int rows);
+    int deleteProductById(BigInteger id);
+    int updateProduct(Product product);
+
+    /**
+     * Product转ProductProperties
+     * @param product
+     * @return ProductProperties
+     */
     ProductProperties getProductProperties(Product product);
+
+    /**
+     * Sku转SkuProperties
+     * @param sku
+     * @return SkuProperties
+     */
     SkuProperties getSkuProperties(Sku sku);
+    //    List<Product> searchProductPage(List<String> keywords,int offset,int rows);
+
+    /**
+     * 模糊查询，返回ProductProperties列表
+     * @param query
+     * @param pagenum
+     * @param pagesize
+     * @return
+     */
     List<ProductProperties> searchProductPage(List<String> query,int pagenum,int pagesize);
+
+    /**
+     * 获取商品详细数据
+     * @param product_id
+     * @return ProductDetail
+     */
     ProductDetail getProductDetail(BigInteger product_id);
+
+    /**
+     * 获取图片URL列表
+     * @param id
+     * @return
+     */
     List<String> getPictureUrlList(BigInteger id);
 }
