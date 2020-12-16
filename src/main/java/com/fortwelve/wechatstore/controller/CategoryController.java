@@ -8,11 +8,12 @@ public class CategoryController {
 
     @RequestMapping("/categories")
     public String categories(){
+
         return "{\n" +
                 "  \"message\": [\n" +
                 "    {\n" +
                 "      \"cat_id\": 1,\n" +
-                "      \"cat_name\": \"大家电\",\n" +
+                "      \"cat_name\": \"男装\",\n" +
                 "      \"cat_pid\": 0,\n" +
                 "      \"cat_level\": 0,\n" +
                 "      \"cat_deleted\": false,\n" +
