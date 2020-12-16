@@ -19,5 +19,5 @@ public class Sku {
   private String properties;
   private BigDecimal sku_price;
   private BigInteger picture_id;
-
 }
+
