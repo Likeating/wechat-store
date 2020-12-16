@@ -3,10 +3,12 @@ package com.fortwelve.wechatstore.controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletResponse;
+
 @RestController
 public class CategoryController {
 
-    @RequestMapping("/categories")
+    @RequestMapping(value = "/categories",produces = "application/json;charset=utf-8")
     public String categories(){
 
         return "{\n" +

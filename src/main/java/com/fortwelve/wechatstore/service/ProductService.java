@@ -1,46 +1,59 @@
 package com.fortwelve.wechatstore.service;
 
-import com.fortwelve.wechatstore.dao.ProductMapper;
+import com.fortwelve.wechatstore.dto.ProductDetail;
+import com.fortwelve.wechatstore.dto.ProductProperties;
+import com.fortwelve.wechatstore.dto.SkuProperties;
+import com.fortwelve.wechatstore.pojo.Picture;
 import com.fortwelve.wechatstore.pojo.Product;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import com.fortwelve.wechatstore.pojo.Sku;
 
 import java.math.BigInteger;
 import java.util.List;
 
-@Service
-public class ProductService {
-    @Autowired
-    ProductMapper productMapper;
+public interface ProductService {
 
-    public int addProduct(Product product){
-        return productMapper.addProduct(product);
-    }
+    int addProduct(Product product);
+    Product getProductById(BigInteger id);
+    List<Product> getAllProduct();
+    List<Product> getProductPage(int offset,int rows);
+    int deleteProductById(BigInteger id);
+    int updateProduct(Product product);
 
-    public Product getProductById(BigInteger id){
-        return productMapper.getProductById(id);
-    }
+    /**
+     * Product转ProductProperties
+     * @param product
+     * @return ProductProperties
+     */
+    ProductProperties getProductProperties(Product product);
 
+    /**
+     * Sku转SkuProperties
+     * @param sku
+     * @return SkuProperties
+     */
+    SkuProperties getSkuProperties(Sku sku);
+    //    List<Product> searchProductPage(List<String> keywords,int offset,int rows);
 
-    public List<Product> getAllProduct(){
-        return productMapper.getAllProduct();
-    }
+    /**
+     * 模糊查询，返回ProductProperties列表
+     * @param query
+     * @param pagenum
+     * @param pagesize
+     * @return
+     */
+    List<ProductProperties> searchProductPage(List<String> query,int pagenum,int pagesize);
 
+    /**
+     * 获取商品详细数据
+     * @param product_id
+     * @return ProductDetail
+     */
+    ProductDetail getProductDetail(BigInteger product_id);
 
-    public List<Product> getProductPage(int offset,int rows){
-        return productMapper.getProductPage(offset,rows);
-    }
-
-
-    public int deleteProductById(BigInteger id){
-        return productMapper.deleteProductById(id);
-    }
-
-    public int updateProduct(Product product){
-        return productMapper.updateProduct(product);
-    }
-
-    public List<Product> searchProductPage(List<String> keywords,int offset,int rows){
-        return productMapper.searchProductPage(keywords,offset,rows);
-    }
+    /**
+     * 获取图片URL列表
+     * @param id
+     * @return
+     */
+    List<String> getPictureUrlList(BigInteger id);
 }
