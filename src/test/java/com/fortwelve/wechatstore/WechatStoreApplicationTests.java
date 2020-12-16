@@ -1,8 +1,13 @@
 package com.fortwelve.wechatstore;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fortwelve.wechatstore.dto.Detail;
 import com.fortwelve.wechatstore.dto.UserInfo;
+import com.fortwelve.wechatstore.pojo.Category;
+import com.fortwelve.wechatstore.pojo.OrderDetail;
 import com.fortwelve.wechatstore.pojo.Product;
 import com.fortwelve.wechatstore.service.CustomerService;
 import com.fortwelve.wechatstore.service.OrderService;
@@ -17,6 +22,7 @@ import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.StringRedisTemplate;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -24,6 +30,8 @@ import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
 
 @SpringBootTest
 class WechatStoreApplicationTests {
@@ -36,7 +44,8 @@ class WechatStoreApplicationTests {
     private WXapi wxapi;
     @Autowired
     OrderService orderService;
-
+    @Autowired
+    ObjectMapper objectMapper;
 
     @Test
     void testProduct(){
@@ -60,6 +69,32 @@ class WechatStoreApplicationTests {
 //        //System.out.println(wxApi.Code2Session("081Thkml22md964TMMkl2iuAvw4ThkmG"));
 //        //System.out.println(objectMapper.readValue("{\"errcode\":40163,\"errmsg\":\"code been used, hints: [ req_id: 6heFeKqge-A0M3HA ]\"}".getBytes(), Code2Session.class));
 //        orderService.createOrder(null,null);
-
+        OrderDetail orderDetail = new OrderDetail(BigInteger.valueOf(1),BigInteger.valueOf(1),BigInteger.valueOf(1),"", BigDecimal.valueOf(55),2);
+        List<OrderDetail> list = new LinkedList<>();
+        list.add(orderDetail);
+        list.add(orderDetail);
+        list.add(orderDetail);
+        //[{"category_id":1,"category_name":"234"},{"category_id":1,"category_name":"234"},{"category_id":1,"category_name":"234"}]
+        //[{"sku_id":1,"sku_price":55,"num":2},{"sku_id":1,"sku_price":55,"num":2},{"sku_id":1,"sku_price":55,"num":2}]
+//        System.out.println(objectMapper.writeValueAsString(list));
+//
+//        JavaType javatype = objectMapper.getTypeFactory().constructType(List.class, Detail.class);
+//        List<OrderDetail> list2 = objectMapper.readValue("[{\"sku_id\":1,\"sku_price\":55,\"num\":2},{\"sku_id\":1,\"sku_price\":55,\"num\":2},{\"sku_id\":1,\"sku_price\":55,\"num\":2}]",javatype);
+//        System.out.println(list2);
+//
+//        List<OrderDetail> list3 = objectMapper.convertValue(list2, new TypeReference<List<OrderDetail>>() {
+//        });
+//
+//        System.out.println((OrderDetail)list3.get(1));
+        List<OrderDetail> list4 = objectMapper.readValue("[{\"sku_id\":1,\"sku_price\":55,\"num\":2},{\"sku_id\":1,\"sku_price\":55,\"num\":2},{\"sku_id\":1,\"sku_price\":55,\"num\":2}]",new TypeReference<List<OrderDetail>>() {
+        });
+        System.out.println(list4.get(1));
+        BigDecimal bigDecimal = new BigDecimal("50");
+        BigDecimal bigDecimal2 = new BigDecimal("1");
+        BigDecimal bigDecimal1;
+        bigDecimal1 =bigDecimal;
+        bigDecimal1.add(bigDecimal2);
+        System.out.println(bigDecimal1.add(bigDecimal2));
+        System.out.println(bigDecimal);
     }
 }

@@ -1,7 +1,9 @@
 package com.fortwelve.wechatstore.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fortwelve.wechatstore.pojo.OrderDetail;
 import com.fortwelve.wechatstore.pojo.OrderInfo;
+import com.fortwelve.wechatstore.util.OrderException;
 
 import java.math.BigInteger;
 import java.util.List;
@@ -25,6 +27,6 @@ public interface OrderService {
      * @param orderDetails 订单商品详细信息，可以包括多个商品
      * @return 成功返回true
      */
-    boolean createOrder(OrderInfo orderInfo,List<OrderDetail> orderDetails);
+    boolean createOrder(OrderInfo orderInfo,List<OrderDetail> orderDetails) throws OrderException, JsonProcessingException;
 
 }

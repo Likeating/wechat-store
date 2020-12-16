@@ -1,5 +1,5 @@
 JWTUtils:
-  minute: 30
+  minute: 300
   signature: "qiumingzhenshuai"
 
 WXApi:

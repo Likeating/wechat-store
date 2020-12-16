@@ -33,8 +33,12 @@ public class JWTInterceptor implements HandlerInterceptor {
         Map<String,Object> meta = new HashMap<>();
 
         try {
-            jwtUtils.verify(token);
-            return true;
+            if(null != token){
+                jwtUtils.verify(token);
+                return true;
+            }
+            meta.put("msg","token无效，请重新登录。");
+            meta.put("status",601);
         }catch (SignatureVerificationException e){
             meta.put("msg","token无效，请重新登录。");
             meta.put("status",601);
@@ -52,11 +56,11 @@ public class JWTInterceptor implements HandlerInterceptor {
             meta.put("status",500);
 //            e.printStackTrace();
         }
-        return true;//暂时改为true
-//        map.put("status",false);
-//        ObjectMapper objectMapper = new ObjectMapper();
-//        response.setContentType("application/json;charset=utf-8");
-//        response.getWriter().append(objectMapper.writeValueAsString(map));
-//        return false;
+//        return true;//暂时改为true
+        map.put("meta",meta);
+        ObjectMapper objectMapper = new ObjectMapper();
+        response.setContentType("application/json;charset=utf-8");
+        response.getWriter().append(objectMapper.writeValueAsString(map));
+        return false;
     }
 }

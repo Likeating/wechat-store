@@ -12,9 +12,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.sql.Timestamp;
@@ -37,7 +39,7 @@ public class UserController {
     StringRedisTemplate stringRedisTemplate;
 
     @PostMapping("/login")
-    public Object login(String code,HttpServletResponse response){
+    public Object login(String code, @RequestBody String code2, HttpServletResponse response){
         Map<String,Object> map = new HashMap<>();
         Map<String,Object> msg = new HashMap<>();
         Map<String,Object> meta = new HashMap<>();
@@ -47,6 +49,8 @@ public class UserController {
 
         try{
             Code2Session code2Session = wxapi.Code2Session(code);
+            System.out.println("code:"+code);
+            System.out.println("code2:"+code2);
             if(code2Session.getErrcode()==0){
                 customer = customerService.getCustomerByOpenId(code2Session.getOpenid());
                 if(null == customer){//未注册
@@ -95,7 +99,7 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public Object register(String rawData,String signature,String encryptedData,String iv,HttpServletResponse response){
+    public Object register(String rawData, String signature, String encryptedData, String iv, HttpServletRequest request,HttpServletResponse response){
         Map<String,Object> map = new HashMap<>();
         Map<String,Object> msg = new HashMap<>();
         Map<String,Object> meta = new HashMap<>();
@@ -104,10 +108,16 @@ public class UserController {
         ObjectMapper objectMapper = new ObjectMapper();
 
         try {
-            String token = response.getHeader("token");
-            if (null == token && token.equals("")){
+            System.out.println("rawData:"+rawData);
+            System.out.println("signature:"+signature);
+            System.out.println("encryptedData:"+encryptedData);
+            System.out.println("iv:"+iv);
+
+            String token = request.getHeader("token");
+            if (null == token || token.equals("")){
                 meta.put("msg","token无效，请重新注册。");
                 meta.put("status",601);
+                map.put("meta",meta);
                 return map;
             }
             Map<String, Claim> claimMap = jwtUtils.decode(token);
@@ -122,6 +132,7 @@ public class UserController {
             if (!wxapi.getSHA1(rawData+session_key).equals(signature)){
                 meta.put("msg","签名不一致或信息遭到篡改。");
                 meta.put("status",605);
+                map.put("meta",meta);
                 return map;
             }
             //校验通过，注册
@@ -147,6 +158,7 @@ public class UserController {
             e.printStackTrace();
             meta.put("msg","服务器出错。");
             meta.put("status",500);
+            map.put("meta",meta);
         }
         return map;
     }
