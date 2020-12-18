@@ -17,6 +17,7 @@ public class OrderDetail {
   private BigInteger id;
   private BigInteger order_id;
   private BigInteger sku_id;
+  private String product_name;
   private String sku_attr;
   private BigDecimal sku_price;
   private int num;

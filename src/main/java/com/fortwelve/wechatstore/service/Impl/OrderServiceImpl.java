@@ -28,6 +28,8 @@ public class OrderServiceImpl implements OrderService {
     @Autowired
     SkuMapper skuMapper;
     @Autowired
+    ProductMapper productMapper;
+    @Autowired
     PropertyKeyMapper keyMapper;
     @Autowired
     PropertyValueMapper valueMapper;
@@ -71,15 +73,24 @@ public class OrderServiceImpl implements OrderService {
         Sku sku;
         BigDecimal totalPrice=new BigDecimal("0");
         BigDecimal payPrice=new BigDecimal("0");
-        List<Map<String,String>> listattr = new LinkedList<>();
+
         Map<String,String> attr=null;
 
         for(OrderDetail orderDetail : orderDetails){
             sku = skuMapper.getSkuById(orderDetail.getSku_id());
+            Product product = productMapper.getProductById(sku.getProduct_id());
+
+            if(null == sku || null == product){
+                throw new OrderException("商品不存在。",608);
+            }
+
+            if(null != product.getDelete_time()){
+                throw new OrderException("商品已下架。",607);
+            }
             //设置详细订单的商品属性
             String properties = sku.getProperties();
             String arr1 [] = properties.split("_");
-
+            List<Map<String,String>> listattr = new LinkedList<>();
             for(String tmp : arr1){
                 PropertyKey key=keyMapper.getPropertyKeyById(new BigInteger(tmp.split(":")[0]));
                 PropertyValue value=valueMapper.getPropertyValueById(new BigInteger(tmp.split(":")[1]));
@@ -88,7 +99,7 @@ public class OrderServiceImpl implements OrderService {
                 attr.put("value",value.getValue_name());
                 listattr.add(attr);
             }
-
+            orderDetail.setProduct_name(product.getProduct_name());
             orderDetail.setSku_attr(objectMapper.writeValueAsString(listattr));
             orderDetail.setSku_price(sku.getSku_price());
             if(sku.getStock()<orderDetail.getNum()){
@@ -108,16 +119,54 @@ public class OrderServiceImpl implements OrderService {
         //未支付
         orderInfo.setOrder_status(0);
         //创建订单主信息
-        orderInfoMapper.addOrderInfo(orderInfo);
 
+        if(0 == orderInfoMapper.addOrderInfo(orderInfo)){
+            return false;
+        }
         BigInteger order_id = orderInfo.getOrder_id();
 
         for(OrderDetail orderDetail : orderDetails){
             orderDetail.setOrder_id(order_id);
-            orderDetailMapper.addOrderDetail(orderDetail);
+            if(0 == orderDetailMapper.addOrderDetail(orderDetail)){
+                return false;
+            }
         }
         return true;
     }
 
 
+    @Override
+    public OrderInfo payOrderById(BigInteger id,BigInteger customer_id) throws OrderException {
+        OrderInfo orderInfo = orderInfoMapper.getOrderInfoById(id);
+        if (null == orderInfo){
+            throw new OrderException("编号为："+id+"的订单不存在。",609);
+        }
+        if (!orderInfo.getCustomer_id().equals(customer_id)){
+            throw new OrderException("无权操作订单。",611);
+        }
+        if(0 != orderInfo.getOrder_status()){
+            throw new OrderException("订单状态出错。",610);
+        }
+        orderInfo.setOrder_status(1);
+        if(0 == orderInfoMapper.updateOrderInfo(orderInfo)){
+            return null;
+        }
+        return orderInfo;
+    }
+
+    @Override
+    public List<OrderInfo> getAllOrderInfoByCustomer_id(BigInteger customer_id) {
+        return orderInfoMapper.getAllOrderInfoByCustomer_id(customer_id);
+    }
+
+    @Override
+    public List<OrderDetail> getAllOrderDetailByOrder_id(BigInteger order_id,BigInteger customer_id) throws OrderException{
+
+//        OrderInfo orderInfo = orderInfoMapper.getOrderInfoById(order_id);
+//
+//        if(!orderInfo.getCustomer_id().equals(customer_id)){
+//            throw new OrderException("无权操作订单",611);
+//        }
+        return orderDetailMapper.getAllOrderDetailByOrder_id(order_id);
+    }
 }

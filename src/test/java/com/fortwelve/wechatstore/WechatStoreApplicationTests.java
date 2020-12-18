@@ -69,11 +69,12 @@ class WechatStoreApplicationTests {
 //        //System.out.println(wxApi.Code2Session("081Thkml22md964TMMkl2iuAvw4ThkmG"));
 //        //System.out.println(objectMapper.readValue("{\"errcode\":40163,\"errmsg\":\"code been used, hints: [ req_id: 6heFeKqge-A0M3HA ]\"}".getBytes(), Code2Session.class));
 //        orderService.createOrder(null,null);
-        OrderDetail orderDetail = new OrderDetail(BigInteger.valueOf(1),BigInteger.valueOf(1),BigInteger.valueOf(1),"", BigDecimal.valueOf(55),2);
-        List<OrderDetail> list = new LinkedList<>();
-        list.add(orderDetail);
-        list.add(orderDetail);
-        list.add(orderDetail);
+
+        //OrderDetail orderDetail = new OrderDetail(BigInteger.valueOf(1),BigInteger.valueOf(1),BigInteger.valueOf(1),"", BigDecimal.valueOf(55),2);
+//        List<OrderDetail> list = new LinkedList<>();
+//        list.add(orderDetail);
+//        list.add(orderDetail);
+//        list.add(orderDetail);
         //[{"category_id":1,"category_name":"234"},{"category_id":1,"category_name":"234"},{"category_id":1,"category_name":"234"}]
         //[{"sku_id":1,"sku_price":55,"num":2},{"sku_id":1,"sku_price":55,"num":2},{"sku_id":1,"sku_price":55,"num":2}]
 //        System.out.println(objectMapper.writeValueAsString(list));
@@ -89,7 +90,7 @@ class WechatStoreApplicationTests {
         List<OrderDetail> list4 = objectMapper.readValue("[{\"sku_id\":1,\"sku_price\":55,\"num\":2},{\"sku_id\":1,\"sku_price\":55,\"num\":2},{\"sku_id\":1,\"sku_price\":55,\"num\":2}]",new TypeReference<List<OrderDetail>>() {
         });
         System.out.println(list4.get(1));
-        BigDecimal bigDecimal = new BigDecimal("50");
+        BigDecimal bigDecimal = new BigDecimal("");
         BigDecimal bigDecimal2 = new BigDecimal("1");
         BigDecimal bigDecimal1;
         bigDecimal1 =bigDecimal;
