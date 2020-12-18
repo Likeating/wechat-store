@@ -24,4 +24,7 @@ public interface OrderInfoMapper {
 
     @Select("select * from order_info")
     public List<OrderInfo> getAllOrderInfo();
+
+    @Select("select * from order_info where customer_id=#{customer_id}")
+    public List<OrderInfo> getAllOrderInfoByCustomer_id(BigInteger customer_id);
 }

@@ -29,4 +29,27 @@ public interface OrderService {
      */
     boolean createOrder(OrderInfo orderInfo,List<OrderDetail> orderDetails) throws OrderException, JsonProcessingException;
 
+    /**
+     * 订单支付
+     * @param id 订单id
+     * @param customer_id 客户id
+     * @return 支付后的订单主信息
+     * @throws OrderException
+     */
+    OrderInfo payOrderById(BigInteger id,BigInteger customer_id)throws OrderException;
+
+    /**
+     * 查询该客户所有订单
+     * @param customer_id
+     * @return 所有订单主信息
+     */
+    List<OrderInfo> getAllOrderInfoByCustomer_id(BigInteger customer_id);
+
+    /**
+     * 查询订单详细信息
+     * @param order_id
+     * @return 订单详细信息
+     */
+    List<OrderDetail> getAllOrderDetailByOrder_id(BigInteger order_id,BigInteger customer_id) throws OrderException;
+
 }

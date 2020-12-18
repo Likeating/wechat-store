@@ -8,6 +8,8 @@ import com.fortwelve.wechatstore.pojo.Customer;
 import com.fortwelve.wechatstore.service.CustomerService;
 import com.fortwelve.wechatstore.util.JWTUtils;
 import com.fortwelve.wechatstore.util.WXapi;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -38,8 +40,10 @@ public class UserController {
     @Autowired
     StringRedisTemplate stringRedisTemplate;
 
+    Logger logger = LoggerFactory.getLogger(this.getClass());
+
     @PostMapping("/login")
-    public Object login(String code, @RequestBody String code2, HttpServletResponse response){
+    public Object login(String code, HttpServletResponse response){
         Map<String,Object> map = new HashMap<>();
         Map<String,Object> msg = new HashMap<>();
         Map<String,Object> meta = new HashMap<>();
@@ -49,8 +53,6 @@ public class UserController {
 
         try{
             Code2Session code2Session = wxapi.Code2Session(code);
-            System.out.println("code:"+code);
-            System.out.println("code2:"+code2);
             if(code2Session.getErrcode()==0){
                 customer = customerService.getCustomerByOpenId(code2Session.getOpenid());
                 if(null == customer){//未注册
@@ -108,12 +110,9 @@ public class UserController {
         ObjectMapper objectMapper = new ObjectMapper();
 
         try {
-            System.out.println("rawData:"+rawData);
-            System.out.println("signature:"+signature);
-            System.out.println("encryptedData:"+encryptedData);
-            System.out.println("iv:"+iv);
 
             String token = request.getHeader("token");
+
             if (null == token || token.equals("")){
                 meta.put("msg","token无效，请重新注册。");
                 meta.put("status",601);
@@ -148,6 +147,9 @@ public class UserController {
             tokenMap.put("nickName", userInfo.getNickName());
 
             response.setHeader("token",jwtUtils.getToken(tokenMap));
+
+            logger.info("新用户："+userInfo.getNickName());
+
 
             msg.put("userInfo",userInfo);
             meta.put("msg","登录成功");
