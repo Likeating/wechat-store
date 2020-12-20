@@ -66,5 +66,4 @@ public class GoodsController {
         map.put("msg",msg);
         return map;
     }
-
 }

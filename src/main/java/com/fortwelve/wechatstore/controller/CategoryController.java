@@ -22,6 +22,8 @@ public class CategoryController {
         Map<String,Object> category = new HashMap<>();
         List<Object> children = new LinkedList();
         List<Object> cate_list = new LinkedList();
+        List<Object> cate_list11=new LinkedList();
+        Map<String,Object> list =new HashMap<>();
         Map<String,Object> cate1 = new HashMap<>();
         Map<String,Object> cate2 = new HashMap<>();
         Map<String,Object> cate3 = new HashMap<>();
@@ -31,6 +33,8 @@ public class CategoryController {
         category.put("cat_name","男装");
         category.put("cat_pid",0);
         category.put("cat_icon","");
+
+        list.put("cat","男");
 
         cate1.put("cat_id",5);
         cate1.put("cat_name","衬衫");
@@ -53,14 +57,17 @@ public class CategoryController {
         cate_list.add(cate3);
         cate_list.add(cate4);
 
-        category.put("children",cate_list);
+        //category.put("children",cate_list);
+        list.put("children",cate_list);
+        cate_list11.add(list);
+        category.put("children",cate_list11);
 
         msg.add(category);
-       // msg.add(tmp);
 
-       //Map<String,Object> tmp2 = new HashMap<>();
         Map<String,Object> category2 = new HashMap<>();
         List<Object> cate_list2 = new LinkedList();
+        List<Object> cate_list21=new LinkedList();
+        Map<String,Object> list2 =new HashMap<>();
         Map<String,Object> cate21 = new HashMap<>();
         Map<String,Object> cate22 = new HashMap<>();
         Map<String,Object> cate23 = new HashMap<>();
@@ -70,6 +77,8 @@ public class CategoryController {
         category2.put("cat_name","女装");
         category2.put("cat_pid",0);
         category2.put("cat_icon","");
+
+        list2.put("cat","女");
 
         cate21.put("cat_id",9);
         cate21.put("cat_name","T恤");
@@ -90,13 +99,16 @@ public class CategoryController {
         cate_list2.add(cate22);
         cate_list2.add(cate23);
         cate_list2.add(cate24);
-        //tmp2.put("cate_list",cate_list2);
-        category2.put("children",cate_list2);
-        msg.add(category2);
-        //msg.add(tmp2);
 
-        //Map<String,Object> tmp3 = new HashMap<>();
+        //category2.put("children",cate_list2);
+        list2.put("children",cate_list2);
+        cate_list21.add(list2);
+        category2.put("children",cate_list21);
+        msg.add(category2);
+
         Map<String,Object> category3 = new HashMap<>();
+        List<Object> cate_list31=new LinkedList();
+        Map<String,Object> list3 =new HashMap<>();
         List<Object> cate_list3 = new LinkedList();
         Map<String,Object> cate31 = new HashMap<>();
         Map<String,Object> cate32 = new HashMap<>();
@@ -105,6 +117,8 @@ public class CategoryController {
         category3.put("cat_name","当月新品");
         category3.put("cat_pid",0);
         category3.put("cat_icon","");
+
+        list3.put("cat","当月新品");
 
         cate31.put("cat_id",13);
         cate31.put("cat_name","联名新品");
@@ -115,13 +129,15 @@ public class CategoryController {
         cate_list3.add(cate31);
         cate_list3.add(cate32);
 
-        //tmp3.put("cate_list",cate_list3);
-        category3.put("children",cate_list3);
+        //category3.put("children",cate_list3);
+        list3.put("children",cate_list3);
+        cate_list31.add(list3);
+        category3.put("children",cate_list31);
         msg.add(category3);
-        //msg.add(tmp3);
 
-        //Map<String,Object> tmp4 = new HashMap<>();
         Map<String,Object> category4 = new HashMap<>();
+        List<Object> cate_list41=new LinkedList();
+        Map<String,Object> list4 =new HashMap<>();
         List<Object> cate_list4 = new LinkedList();
         Map<String,Object> cate41 = new HashMap<>();
         Map<String,Object> cate42 = new HashMap<>();
@@ -131,6 +147,8 @@ public class CategoryController {
         category4.put("cat_name","当月热销");
         category4.put("cat_pid",0);
         category4.put("cat_icon","");
+
+        list4.put("cat","当月热销");
 
         cate41.put("cat_id",15);
         cate41.put("cat_name","上衣");
@@ -144,10 +162,11 @@ public class CategoryController {
         cate_list4.add(cate41);
         cate_list4.add(cate42);
         cate_list4.add(cate43);
-        //tmp4.put("cate_list",cate_list4);
-        category4.put("children",cate_list4);
+        //category4.put("children",cate_list4);
+        list4.put("children",cate_list4);
+        cate_list41.add(list4);
+        category4.put("children",cate_list41);
         msg.add(category4);
-        //msg.add(tmp4);
 
         meta.put("msg","获取成功");
         meta.put("status",200);
