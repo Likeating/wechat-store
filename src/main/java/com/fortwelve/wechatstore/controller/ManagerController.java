@@ -91,12 +91,9 @@ public class ManagerController {
                     managerDTO.getTel()==null ||
                     managerDTO.getSex()==null ||
                     managerDTO.getRole()==null){
-
-
-
-
-
             }
+
+
 
         }catch (Exception e){
             meta.put("msg","服务器出错。");
