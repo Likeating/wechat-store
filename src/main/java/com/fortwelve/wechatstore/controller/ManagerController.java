@@ -82,6 +82,7 @@ public class ManagerController {
         Map<String,Object> map = new HashMap<>();
         Map<String,Object> meta = new HashMap<>();
         Map<String,Object> msg = new HashMap<>();
+
         try {
             //判断字段是否为空
             if(managerDTO.getUsername()==null ||
