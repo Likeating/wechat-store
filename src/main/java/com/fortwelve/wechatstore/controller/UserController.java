@@ -2,8 +2,8 @@ package com.fortwelve.wechatstore.controller;
 
 import com.auth0.jwt.interfaces.Claim;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fortwelve.wechatstore.dto.Code2Session;
-import com.fortwelve.wechatstore.dto.UserInfo;
+import com.fortwelve.wechatstore.dto.Code2SessionDTO;
+import com.fortwelve.wechatstore.dto.UserInfoDTO;
 import com.fortwelve.wechatstore.pojo.Customer;
 import com.fortwelve.wechatstore.service.CustomerService;
 import com.fortwelve.wechatstore.util.JWTUtils;
@@ -11,18 +11,16 @@ import com.fortwelve.wechatstore.util.WXapi;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.sql.Timestamp;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -31,14 +29,19 @@ import java.util.concurrent.TimeUnit;
 @RestController
 @RequestMapping("/user")
 public class UserController {
-    @Autowired
-    JWTUtils jwtUtils;
+
     @Autowired
     WXapi wxapi;
     @Autowired
     CustomerService customerService;
     @Autowired
     StringRedisTemplate stringRedisTemplate;
+
+    @Value("${JWTUtils.wx.signature}")
+    private String wxSignature;
+    @Value("${JWTUtils.wx.minute}")
+    private int wxMinute;
+
 
     Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -52,18 +55,18 @@ public class UserController {
         Customer customer;
 
         try{
-            Code2Session code2Session = wxapi.Code2Session(code);
-            if(code2Session.getErrcode()==0){
-                customer = customerService.getCustomerByOpenId(code2Session.getOpenid());
+            Code2SessionDTO code2SessionDTO = wxapi.Code2Session(code);
+            if(code2SessionDTO.getErrcode()==0){
+                customer = customerService.getCustomerByOpenId(code2SessionDTO.getOpenid());
                 if(null == customer){//未注册
                     //保存到redis中
-                    stringRedisTemplate.opsForHash().put(code,"openid",code2Session.getOpenid());
-                    stringRedisTemplate.opsForHash().put(code,"session_key",code2Session.getSession_key());
+                    stringRedisTemplate.opsForHash().put(code,"openid", code2SessionDTO.getOpenid());
+                    stringRedisTemplate.opsForHash().put(code,"session_key", code2SessionDTO.getSession_key());
                     stringRedisTemplate.expire(code,30,TimeUnit.MINUTES);
 
                     //返回包含了code的token，以便于注册用户功能
                     tokenMap.put("code",code);
-                    response.setHeader("token",jwtUtils.getToken(tokenMap));
+                    response.setHeader("token",JWTUtils.getToken(tokenMap,wxSignature,wxMinute));
 
                     meta.put("msg","未注册");
                     meta.put("status",604);
@@ -71,8 +74,8 @@ public class UserController {
                     return map;
                 }
             }else {
-                meta.put("msg","登录失败！"+code2Session.getErrmsg());
-                meta.put("status",code2Session.getErrcode());
+                meta.put("msg","登录失败！"+ code2SessionDTO.getErrmsg());
+                meta.put("status", code2SessionDTO.getErrcode());
                 map.put("meta",meta);
                 return map;
             }
@@ -85,14 +88,14 @@ public class UserController {
         }
         //登录成功，且已经注册的用户
 
-        UserInfo userInfo = customerService.CustomerToUserInfo(customer);
+        UserInfoDTO userInfoDTO = customerService.CustomerToUserInfo(customer);
 
-        tokenMap.put("userId", String.valueOf(userInfo.getUserId()));
-        tokenMap.put("nickName", userInfo.getNickName());
+        tokenMap.put("userId", String.valueOf(userInfoDTO.getUserId()));
+        tokenMap.put("nickName", userInfoDTO.getNickName());
 
-        response.setHeader("token",jwtUtils.getToken(tokenMap));
+        response.setHeader("token",JWTUtils.getToken(tokenMap,wxSignature,wxMinute));
 
-        msg.put("userInfo",userInfo);
+        msg.put("userInfo", userInfoDTO);
         meta.put("msg","登录成功");
         meta.put("status",200);
         map.put("meta",meta);
@@ -119,7 +122,7 @@ public class UserController {
                 map.put("meta",meta);
                 return map;
             }
-            Map<String, Claim> claimMap = jwtUtils.decode(token);
+            Map<String, Claim> claimMap = JWTUtils.decode(token,wxSignature);
             String code = claimMap.get("code").asString();
 
             HashOperations<String,String,String> ops = stringRedisTemplate.opsForHash();
@@ -135,23 +138,23 @@ public class UserController {
                 return map;
             }
             //校验通过，注册
-            UserInfo userInfo = objectMapper.readValue(rawData,UserInfo.class);
+            UserInfoDTO userInfoDTO = objectMapper.readValue(rawData, UserInfoDTO.class);
             //转换成customer
-            Customer customer = customerService.UserInfoToCustomer(userInfo,openid);
+            Customer customer = customerService.UserInfoToCustomer(userInfoDTO,openid);
             //存入数据库
             customerService.addCustomer(customer);
             //返回自增加主键值
-            userInfo.setUserId(customer.getCustomer_id());
+            userInfoDTO.setUserId(customer.getCustomer_id());
 
-            tokenMap.put("userId", String.valueOf(userInfo.getUserId()));
-            tokenMap.put("nickName", userInfo.getNickName());
+            tokenMap.put("userId", String.valueOf(userInfoDTO.getUserId()));
+            tokenMap.put("nickName", userInfoDTO.getNickName());
 
-            response.setHeader("token",jwtUtils.getToken(tokenMap));
+            response.setHeader("token",JWTUtils.getToken(tokenMap,wxSignature,wxMinute));
 
-            logger.info("新用户："+userInfo.getNickName());
+            logger.info("新用户："+ userInfoDTO.getNickName());
 
 
-            msg.put("userInfo",userInfo);
+            msg.put("userInfo", userInfoDTO);
             meta.put("msg","登录成功");
             meta.put("status",200);
             map.put("meta",meta);

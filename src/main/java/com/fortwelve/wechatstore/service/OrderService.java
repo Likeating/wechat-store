@@ -40,10 +40,13 @@ public interface OrderService {
 
     /**
      * 查询该客户所有订单
-     * @param customer_id
+     * @param customer_id 客户id
+     * @param order_status 订单状态 -1表示有效订单(0-4), -2表示全部(0-5)
+     *                     0.未支付；1.待发货；2.已发货；3.已完成；4.已关闭；5.无效订单
+     * @param sort 排序方式 0.不排序 1.desc 降序 2.asc升序
      * @return 所有订单主信息
      */
-    List<OrderInfo> getAllOrderInfoByCustomer_id(BigInteger customer_id);
+    List<OrderInfo> getAllOrderInfoByCustomer_idAndOrder_status(BigInteger customer_id,int order_status,int sort);
 
     /**
      * 查询订单详细信息

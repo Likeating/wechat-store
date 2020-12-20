@@ -15,7 +15,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class Code2Session {
+public class Code2SessionDTO {
     private String openid;
     private String session_key;
     private String unionid;

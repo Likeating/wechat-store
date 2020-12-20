@@ -14,7 +14,7 @@ import java.util.Map;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class Detail {
+public class DetailDTO {
 
     private BigInteger sku_id;
     private BigDecimal sku_price;

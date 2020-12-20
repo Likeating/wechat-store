@@ -12,11 +12,11 @@ import java.util.Map;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class ProductDetail {
-    private ProductProperties product;//商品详情
+public class ProductDetailDTO {
+    private ProductPropertiesDTO product;//商品详情
     private Map<String,String> keys;//属性
     private Map<String,String> values;//属性值
-    private List<SkuProperties> skuList;//sku属性
+    private List<SkuPropertiesDTO> skuList;//sku属性
     private List<String> previews;//预览图（轮播图）
     private List<String> pics;//详情图
 }

@@ -1,17 +1,11 @@
 package com.fortwelve.wechatstore.util;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fortwelve.wechatstore.dto.Code2Session;
-import lombok.SneakyThrows;
+import com.fortwelve.wechatstore.dto.Code2SessionDTO;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -26,14 +20,14 @@ public class WXapi {
     /**
      * 获取openid
      * @param js_code
-     * @return Code2Session(openid=oUhCD4sItcSXf24odsTHY9tllcNQ, session_key=a9xluJbwVSx6EjuxZEbTqw==, unionid=null, errcode=0, errmsg=null)
+     * @return Code2SessionDTO(openid=oUhCD4sItcSXf24odsTHY9tllcNQ, session_key=a9xluJbwVSx6EjuxZEbTqw==, unionid=null, errcode=0, errmsg=null)
      * @throws IOException
      */
-    public Code2Session Code2Session(String js_code)throws IOException{
+    public Code2SessionDTO Code2Session(String js_code)throws IOException{
         URL url = new URL("https://api.weixin.qq.com/sns/jscode2session?appid="+appid+"&secret="+secret+"&js_code="+js_code+"&grant_type=authorization_code");
         ObjectMapper objectMapper = new ObjectMapper();
-        Code2Session code2Session = objectMapper.readValue(url, Code2Session.class);
-        return code2Session;
+        Code2SessionDTO code2SessionDTO = objectMapper.readValue(url, Code2SessionDTO.class);
+        return code2SessionDTO;
     }
 
     /**

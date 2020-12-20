@@ -11,20 +11,12 @@ import org.springframework.stereotype.Component;
 import java.util.Calendar;
 import java.util.Map;
 
-@Component("jwtUtils")
 public class JWTUtils {
 
-    @Value("${JWTUtils.signature}")
-    private String signature;
-
-    @Value("${JWTUtils.minute}")
-    private int minute;
-
-
-    public String getToken(Map<String,String> map){
+    public static String getToken(Map<String,String> map,String signature,int minute){
         Builder builder = JWT.create();
         Calendar instance = Calendar.getInstance();
-        instance.add(Calendar.MINUTE,30);
+        instance.add(Calendar.MINUTE,minute);
         map.forEach((k,v)->{
             builder.withClaim(k,v);
         });
@@ -32,11 +24,11 @@ public class JWTUtils {
         builder.withExpiresAt(instance.getTime());
         return builder.sign(Algorithm.HMAC256(signature));
     }
-    public Map<String,Claim> decode(String token){
-        Map<String, Claim> map =verify(token).getClaims();
+    public static Map<String,Claim> decode(String token,String signature){
+        Map<String, Claim> map =verify(token,signature).getClaims();
         return map;
     }
-    public DecodedJWT verify(String token){
+    public static DecodedJWT verify(String token,String signature){
         return JWT.require(Algorithm.HMAC256(signature)).build().verify(token);
     }
 }
