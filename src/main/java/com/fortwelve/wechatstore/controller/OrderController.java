@@ -2,7 +2,6 @@ package com.fortwelve.wechatstore.controller;
 
 import com.auth0.jwt.interfaces.Claim;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fortwelve.wechatstore.pojo.OrderDetail;
 import com.fortwelve.wechatstore.pojo.OrderInfo;
@@ -12,6 +11,7 @@ import com.fortwelve.wechatstore.util.OrderException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -34,14 +34,16 @@ public class OrderController {
     ObjectMapper objectMapper;
     @Autowired
     OrderService orderService;
-    @Autowired
-    JWTUtils jwtUtils;
 
+    @Value("${JWTUtils.wx.signature}")
+    private String wxSignature;
+    @Value("${JWTUtils.wx.minute}")
+    private int wxMinute;
 
     Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @PostMapping("/create")
-    public Object create(String consignee_addr,String note, String details, HttpServletRequest request, HttpServletResponse response){
+    public Object create(String consignee_addr, String note, String details, HttpServletRequest request, HttpServletResponse response){
         Map<String,Object> map = new HashMap<>();
         Map<String,Object> msg = new HashMap<>();
         Map<String,Object> meta = new HashMap<>();
@@ -49,7 +51,7 @@ public class OrderController {
         try{
             //获取token
             String token = request.getHeader("token");
-            Map<String, Claim> tokenMap = jwtUtils.decode(token);
+            Map<String, Claim> tokenMap = JWTUtils.decode(token,wxSignature);
             String customerIdstr = tokenMap.get("userId").asString();
 
             if (null == consignee_addr || null == note || null == details || null == customerIdstr){
@@ -61,11 +63,13 @@ public class OrderController {
             //获取customerId
             BigInteger cutomerId = new BigInteger(customerIdstr);
 
+            System.out.println(details);
+
             LinkedList<OrderDetail> list = objectMapper.readValue(details, new TypeReference<LinkedList<OrderDetail>>() {});
 //            System.out.println(list);
 
             logger.info("consignee_addr"+consignee_addr);
-            logger.info("details"+list.get(1).toString());
+            logger.info("details"+list.get(0).toString());
 
 
             OrderInfo orderInfo = new OrderInfo();
@@ -111,7 +115,7 @@ public class OrderController {
         try{
             //获取token
             String token = request.getHeader("token");
-            Map<String, Claim> tokenMap = jwtUtils.decode(token);
+            Map<String, Claim> tokenMap = JWTUtils.decode(token,wxSignature);
             String customerIdstr = tokenMap.get("userId").asString();
 
             if (null == order_id || null == customerIdstr){
@@ -154,23 +158,34 @@ public class OrderController {
         return map;
     }
     @RequestMapping("/all")
-    public Object all(HttpServletRequest request){
+    public Object all(Integer type , HttpServletRequest request){
         Map<String,Object> map = new HashMap<>();
         Map<String,Object> msg = new HashMap<>();
         Map<String,Object> meta = new HashMap<>();
         try{
             //获取token
             String token = request.getHeader("token");
-            Map<String, Claim> tokenMap = jwtUtils.decode(token);
+            Map<String, Claim> tokenMap = JWTUtils.decode(token,wxSignature);
             String customerIdstr = tokenMap.get("userId").asString();
-            if (null == customerIdstr){
+            if (null == customerIdstr || null == type){
                 meta.put("msg","请求不正确。");
                 meta.put("status",701);
                 map.put("meta",meta);
                 return map;
             }
+            int status;
+            switch (type){
+                case 2:
+                    status = 0;
+                    break;
+                case 3:
+                    status = 1;
+                    break;
+                default:
+                    status = -1;
+            }
+            List<OrderInfo> orderInfos = orderService.getAllOrderInfoByCustomer_idAndOrder_status(new BigInteger(customerIdstr),status,1);
 
-            List<OrderInfo> orderInfos = orderService.getAllOrderInfoByCustomer_id(new BigInteger(customerIdstr));
             msg.put("orderInfos",orderInfos);
 
             meta.put("msg","查询成功。");
@@ -199,7 +214,7 @@ public class OrderController {
         try{
             //获取token
             String token = request.getHeader("token");
-            Map<String, Claim> tokenMap = jwtUtils.decode(token);
+            Map<String, Claim> tokenMap = JWTUtils.decode(token,wxSignature);
             String customerIdstr = tokenMap.get("userId").asString();
 
             if (null == customerIdstr || null == order_id){

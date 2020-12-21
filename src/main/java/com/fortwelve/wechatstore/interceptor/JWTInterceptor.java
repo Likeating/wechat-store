@@ -19,10 +19,28 @@ import java.util.Map;
 
 public class JWTInterceptor implements HandlerInterceptor {
 
-    private JWTUtils jwtUtils;
+    private String signature;
+    private int minute;
 
-    public JWTInterceptor(JWTUtils jwtUtils) {
-        this.jwtUtils = jwtUtils;
+    public JWTInterceptor(String signature, int minute) {
+        this.signature = signature;
+        this.minute = minute;
+    }
+
+    public String getSignature() {
+        return signature;
+    }
+
+    public void setSignature(String signature) {
+        this.signature = signature;
+    }
+
+    public int getMinute() {
+        return minute;
+    }
+
+    public void setMinute(int minute) {
+        this.minute = minute;
     }
 
     @Override
@@ -34,7 +52,7 @@ public class JWTInterceptor implements HandlerInterceptor {
 
         try {
             if(null != token){
-                jwtUtils.verify(token);
+                JWTUtils.verify(token,signature);
                 return true;
             }
             meta.put("msg","token无效，请重新登录。");

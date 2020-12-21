@@ -11,7 +11,7 @@ import java.math.BigInteger;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class SkuProperties {
+public class SkuPropertiesDTO {
 
     private BigInteger sku_id;
     private BigInteger product_id;

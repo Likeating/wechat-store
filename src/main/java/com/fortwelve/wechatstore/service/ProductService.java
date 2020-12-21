@@ -1,9 +1,8 @@
 package com.fortwelve.wechatstore.service;
 
-import com.fortwelve.wechatstore.dto.ProductDetail;
-import com.fortwelve.wechatstore.dto.ProductProperties;
-import com.fortwelve.wechatstore.dto.SkuProperties;
-import com.fortwelve.wechatstore.pojo.Picture;
+import com.fortwelve.wechatstore.dto.ProductDetailDTO;
+import com.fortwelve.wechatstore.dto.ProductPropertiesDTO;
+import com.fortwelve.wechatstore.dto.SkuPropertiesDTO;
 import com.fortwelve.wechatstore.pojo.Product;
 import com.fortwelve.wechatstore.pojo.Sku;
 
@@ -22,16 +21,16 @@ public interface ProductService {
     /**
      * Product转ProductProperties
      * @param product
-     * @return ProductProperties
+     * @return ProductPropertiesDTO
      */
-    ProductProperties getProductProperties(Product product);
+    ProductPropertiesDTO getProductProperties(Product product);
 
     /**
      * Sku转SkuProperties
      * @param sku
-     * @return SkuProperties
+     * @return SkuPropertiesDTO
      */
-    SkuProperties getSkuProperties(Sku sku);
+    SkuPropertiesDTO getSkuProperties(Sku sku);
     //    List<Product> searchProductPage(List<String> keywords,int offset,int rows);
 
     /**
@@ -41,14 +40,14 @@ public interface ProductService {
      * @param pagesize
      * @return
      */
-    List<ProductProperties> searchProductPage(List<String> query,int pagenum,int pagesize);
+    List<ProductPropertiesDTO> searchProductPage(List<String> query, int pagenum, int pagesize);
 
     /**
      * 获取商品详细数据
      * @param product_id
-     * @return ProductDetail
+     * @return ProductDetailDTO
      */
-    ProductDetail getProductDetail(BigInteger product_id);
+    ProductDetailDTO getProductDetail(BigInteger product_id);
 
     /**
      * 获取图片URL列表

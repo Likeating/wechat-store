@@ -46,11 +46,13 @@ public class OrderServiceImpl implements OrderService {
         return orderInfoMapper.addOrderInfo(orderInfo);
     }
 
+    @Transactional
     @Override
     public int updateOrderInfo(OrderInfo orderInfo) {
         return orderInfoMapper.updateOrderInfo(orderInfo);
     }
 
+    @Transactional
     @Override
     public int deleteOrderInfoById(BigInteger id) {
         return orderInfoMapper.deleteOrderInfoById(id);
@@ -135,6 +137,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
 
+    @Transactional
     @Override
     public OrderInfo payOrderById(BigInteger id,BigInteger customer_id) throws OrderException {
         OrderInfo orderInfo = orderInfoMapper.getOrderInfoById(id);
@@ -155,8 +158,8 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<OrderInfo> getAllOrderInfoByCustomer_id(BigInteger customer_id) {
-        return orderInfoMapper.getAllOrderInfoByCustomer_id(customer_id);
+    public List<OrderInfo> getAllOrderInfoByCustomer_idAndOrder_status(BigInteger customer_id,int order_status,int sort) {
+        return orderInfoMapper.getAllOrderInfoByCustomer_idAndOrder_status(customer_id,order_status,sort);
     }
 
     @Override

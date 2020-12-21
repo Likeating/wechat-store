@@ -1,7 +1,7 @@
 package com.fortwelve.wechatstore.service.Impl;
 
 import com.fortwelve.wechatstore.dao.CustomerMapper;
-import com.fortwelve.wechatstore.dto.UserInfo;
+import com.fortwelve.wechatstore.dto.UserInfoDTO;
 import com.fortwelve.wechatstore.pojo.Customer;
 import com.fortwelve.wechatstore.service.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,8 +51,8 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public UserInfo CustomerToUserInfo(Customer customer) {
-        UserInfo userInfo = new UserInfo(
+    public UserInfoDTO CustomerToUserInfo(Customer customer) {
+        UserInfoDTO userInfoDTO = new UserInfoDTO(
                 customer.getCustomer_id(),
                 customer.getNickName(),
                 customer.getGender(),
@@ -63,23 +63,23 @@ public class CustomerServiceImpl implements CustomerService {
                 customer.getAvatarUrl(),
                 customer.getCreate_time()
         );
-        return userInfo;
+        return userInfoDTO;
     }
 
     @Override
-    public Customer UserInfoToCustomer(UserInfo userInfo,String openid) {
+    public Customer UserInfoToCustomer(UserInfoDTO userInfoDTO, String openid) {
 
         return new Customer(
-                userInfo.getUserId(),
+                userInfoDTO.getUserId(),
                 openid,
-                userInfo.getNickName(),
-                userInfo.getGender(),
-                userInfo.getLanguage(),
-                userInfo.getCity(),
-                userInfo.getProvince(),
-                userInfo.getCountry(),
-                userInfo.getAvatarUrl(),
-                userInfo.getCreate_time()
+                userInfoDTO.getNickName(),
+                userInfoDTO.getGender(),
+                userInfoDTO.getLanguage(),
+                userInfoDTO.getCity(),
+                userInfoDTO.getProvince(),
+                userInfoDTO.getCountry(),
+                userInfoDTO.getAvatarUrl(),
+                userInfoDTO.getCreate_time()
         );
     }
 }

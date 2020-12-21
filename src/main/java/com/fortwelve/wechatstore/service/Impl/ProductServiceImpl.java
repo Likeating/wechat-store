@@ -1,10 +1,9 @@
 package com.fortwelve.wechatstore.service.Impl;
 
 import com.fortwelve.wechatstore.dao.*;
-import com.fortwelve.wechatstore.dto.ProductDetail;
-import com.fortwelve.wechatstore.dto.ProductProperties;
-import com.fortwelve.wechatstore.dto.SkuProperties;
-import com.fortwelve.wechatstore.pojo.Picture;
+import com.fortwelve.wechatstore.dto.ProductDetailDTO;
+import com.fortwelve.wechatstore.dto.ProductPropertiesDTO;
+import com.fortwelve.wechatstore.dto.SkuPropertiesDTO;
 import com.fortwelve.wechatstore.pojo.PictureList;
 import com.fortwelve.wechatstore.pojo.Product;
 import com.fortwelve.wechatstore.pojo.Sku;
@@ -64,8 +63,8 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public ProductProperties getProductProperties(Product product) {
-        return new ProductProperties(product.getProduct_id(),
+    public ProductPropertiesDTO getProductProperties(Product product) {
+        return new ProductPropertiesDTO(product.getProduct_id(),
                 product.getProduct_name(),
                 product.getPrice(),
                 product.getCategory_id(),
@@ -76,8 +75,8 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public SkuProperties getSkuProperties(Sku sku) {
-        return new SkuProperties(sku.getSku_id(),
+    public SkuPropertiesDTO getSkuProperties(Sku sku) {
+        return new SkuPropertiesDTO(sku.getSku_id(),
                 sku.getProduct_id(),
                 sku.getProperties(),
                 sku.getSku_price(),
@@ -86,9 +85,9 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<ProductProperties> searchProductPage(List<String> query,int pagenum,int pagesize) {
+    public List<ProductPropertiesDTO> searchProductPage(List<String> query, int pagenum, int pagesize) {
         List<Product> products = productMapper.searchProductPage(query,pagenum,pagesize);
-        List<ProductProperties> productPropertiesList = new LinkedList<>();
+        List<ProductPropertiesDTO> productPropertiesList = new LinkedList<>();
 
         for(Product product:products){
             productPropertiesList.add(getProductProperties(product));
@@ -109,8 +108,8 @@ public class ProductServiceImpl implements ProductService {
         return pictureUrlList;
     }
     @Override
-    public ProductDetail getProductDetail(BigInteger product_id) {
-        ProductDetail productDetail = new ProductDetail();
+    public ProductDetailDTO getProductDetail(BigInteger product_id) {
+        ProductDetailDTO productDetailDTO = new ProductDetailDTO();
         Product product = productMapper.getProductById(product_id);
         //商品不存在
         if (product==null){
@@ -123,7 +122,7 @@ public class ProductServiceImpl implements ProductService {
 
         //获取sku属性、key、value
         List<Sku> skuList = skuMapper.getSkuByProductId(product.getProduct_id());
-        List<SkuProperties> skuPropertiesList = new LinkedList<>();
+        List<SkuPropertiesDTO> skuPropertiesDTOList = new LinkedList<>();
 
         String [] properties;
         String [] kv;
@@ -140,13 +139,13 @@ public class ProductServiceImpl implements ProductService {
                     values.put(kv[1],propertyValueMapper.getPropertyValueById(new BigInteger(kv[1])).getValue_name());
                 }
             }
-            skuPropertiesList.add(getSkuProperties(sku));
+            skuPropertiesDTOList.add(getSkuProperties(sku));
         }
-        return new ProductDetail(
+        return new ProductDetailDTO(
                 getProductProperties(product),
                 keys,
                 values,
-                skuPropertiesList,
+                skuPropertiesDTOList,
                 getPictureUrlList(product.getPreview_id()),
                 getPictureUrlList(product.getDetail_id())
         );

@@ -1,7 +1,6 @@
 package com.fortwelve.wechatstore.service;
 
-import com.fortwelve.wechatstore.dao.CustomerMapper;
-import com.fortwelve.wechatstore.dto.UserInfo;
+import com.fortwelve.wechatstore.dto.UserInfoDTO;
 import com.fortwelve.wechatstore.pojo.Customer;
 
 import java.math.BigInteger;
@@ -21,7 +20,7 @@ public interface CustomerService {
 
     Customer getCustomerByOpenId(String openid);
 
-    UserInfo CustomerToUserInfo(Customer customer);
+    UserInfoDTO CustomerToUserInfo(Customer customer);
 
-    Customer UserInfoToCustomer(UserInfo userInfo,String openid);
+    Customer UserInfoToCustomer(UserInfoDTO userInfoDTO, String openid);
 }

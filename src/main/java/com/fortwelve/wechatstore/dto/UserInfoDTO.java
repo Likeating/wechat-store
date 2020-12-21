@@ -12,7 +12,7 @@ import java.sql.Timestamp;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class UserInfo {
+public class UserInfoDTO {
 
     private BigInteger userId;
     private String nickName;

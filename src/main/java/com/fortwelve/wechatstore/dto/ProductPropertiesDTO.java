@@ -15,7 +15,7 @@ import java.sql.Timestamp;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class ProductProperties {
+public class ProductPropertiesDTO {
     private BigInteger goods_id;
     private String goods_name;
     private BigDecimal goods_price;

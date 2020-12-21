@@ -25,6 +25,19 @@ public interface OrderInfoMapper {
     @Select("select * from order_info")
     public List<OrderInfo> getAllOrderInfo();
 
-    @Select("select * from order_info where customer_id=#{customer_id}")
-    public List<OrderInfo> getAllOrderInfoByCustomer_id(BigInteger customer_id);
+
+    //大于小于号要用特殊字符 &gt; &lt; 代替
+    //或者是放在 <![CDATA[  表达式  ]]>中
+    @Select("<script> select * from order_info <where>"+
+            "<if test='customer_id!=null'> customer_id=#{customer_id}</if>"+
+            "<choose>"+
+            "<when test='order_status == -1'> and <![CDATA[order_status >= 0 and order_status<=4 ]]></when>"+
+            "<when test='order_status == -2'> and <![CDATA[order_status >= 0 and order_status<=5 ]]></when>"+
+            "<otherwise> and order_status=#{order_status} </otherwise>"+
+            "</choose></where>"+
+            "<if test='sort == 1'> order by create_time desc</if>"+
+            "<if test='sort == 2'> order by create_time asc</if>"+
+            "</script>")
+    public List<OrderInfo> getAllOrderInfoByCustomer_idAndOrder_status(BigInteger customer_id,int order_status,int sort);
+
 }
