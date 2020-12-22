@@ -1,10 +1,11 @@
 package com.fortwelve.wechatstore.component;
 
-import lombok.Data;
+
 import lombok.ToString;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 @Component
@@ -12,18 +13,10 @@ import java.util.Map;
 public class MsgMap {
     private Map<String,Object> msg;
     private Map<String,Object> meta;
-
     public MsgMap() {
-        msg=new HashMap<>();
-        meta=new HashMap<>();
+        this.msg=new LinkedHashMap<>();
+        this.meta=new LinkedHashMap<>();
     }
-    public MsgMap(String msg, int status) {
-        this.msg=new HashMap<>();
-        meta=new HashMap<>();
-        meta.put("msg",msg);
-        meta.put("status",status);
-    }
-
     public Map<String,Object> getMsg() {
         return msg;
     }

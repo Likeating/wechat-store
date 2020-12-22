@@ -13,6 +13,6 @@ public class StartThreadApplicationRunner implements ApplicationRunner {
     public void run(ApplicationArguments args) throws Exception {
 //        System.out.println("ApplicationArguments");
         //程序启动之后，开始订单检查线程
-        orderCheckerThread.start();
+//        orderCheckerThread.start();
     }
 }

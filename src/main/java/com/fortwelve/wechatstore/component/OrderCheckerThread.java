@@ -65,7 +65,11 @@ public class OrderCheckerThread extends Thread{
                     while (cursor.hasNext()){
                         id = cursor.next();
                         createTime = opsForHash.get("check_order_hash",id);
-
+                        if(createTime==null){
+                            log.error("出现创建时间为空的订单，请手动检查。");
+                            opsForSet.remove("check_order_id",id);
+                            opsForHash.delete("check_order_hash",id);
+                        }
                         //未超时 跳过
                         if(currentTimeMillis-Long.parseLong(createTime) <= ttl)continue;
 
@@ -87,9 +91,15 @@ public class OrderCheckerThread extends Thread{
                         }
                     }
                     cursor.close();
-                    Thread.sleep(interval);//一分钟检查一次
                 }catch (Exception e){
                     log.error("订单检查线程出错："+e.getMessage());
+                    e.printStackTrace();
+                }
+                //写在这里是为了前面出错也可以定时，而不是一直循环占用资源
+                try {
+                    Thread.sleep(interval);//一分钟检查一次
+                }catch (Exception e){
+                    log.error("订单检查线程定时出错："+e.getMessage());
                     e.printStackTrace();
                 }
             }

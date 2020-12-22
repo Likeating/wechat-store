@@ -19,5 +19,5 @@ public class Manager {
     private String email;
     private String tel;
     private String sex;
-    private int role_id;
+    private Integer role_id;
 }

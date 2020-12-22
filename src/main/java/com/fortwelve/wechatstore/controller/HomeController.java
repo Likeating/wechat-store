@@ -1,5 +1,7 @@
 package com.fortwelve.wechatstore.controller;
 
+import com.fortwelve.wechatstore.pojo.Manager;
+import org.springframework.beans.factory.support.ManagedList;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 

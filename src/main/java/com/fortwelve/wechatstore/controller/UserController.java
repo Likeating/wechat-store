@@ -115,18 +115,29 @@ public class UserController {
 
             String openid = ops.get(code,"openid");
             String session_key = ops.get(code,"session_key");
-
+            if(openid == null || session_key == null){
+                msg.setMeta("请先尝试登录。",701);
+                return msg;
+            }
             //数据校验
             if (!wxapi.getSHA1(rawData+session_key).equals(signature)){
                 msg.setMeta("签名不一致或信息遭到篡改。",605);
+                return msg;
+            }
+            if(customerService.getCustomerByOpenId(openid)!=null){
+                msg.setMeta("用户已经存在。",623);
                 return msg;
             }
             //校验通过，注册
             UserInfoDTO userInfoDTO = objectMapper.readValue(rawData, UserInfoDTO.class);
             //转换成customer
             Customer customer = customerService.UserInfoToCustomer(userInfoDTO,openid);
+
             //存入数据库
-            customerService.addCustomer(customer);
+            if(customerService.addCustomer(customer)==0){
+                msg.setMeta("注册失败。",500);
+                return msg;
+            }
             //返回自增加主键值
             userInfoDTO.setUserId(customer.getCustomer_id());
 

@@ -2,6 +2,7 @@ package com.fortwelve.wechatstore;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fortwelve.wechatstore.component.MsgMap;
+import com.fortwelve.wechatstore.pojo.OrderDetail;
 import com.fortwelve.wechatstore.pojo.Product;
 import com.fortwelve.wechatstore.service.OrderService;
 import com.fortwelve.wechatstore.service.ProductService;
@@ -19,6 +20,8 @@ import java.math.BigInteger;
 import java.security.NoSuchAlgorithmException;
 import java.sql.Timestamp;
 import java.util.Calendar;
+import java.util.LinkedList;
+import java.util.List;
 
 @SpringBootTest
 @Slf4j
@@ -60,12 +63,8 @@ class WechatStoreApplicationTests {
 
     @Test
     void Test01() throws IOException, NoSuchAlgorithmException {
-        BigInteger bigInteger = new BigInteger("123");
-        String a="12";
-        System.out.println(bigInteger.equals(a));
-        a=a+"3";
-        System.out.println(bigInteger.equals(a));
-        BigInteger c =new BigInteger(a);
-        System.out.println(bigInteger.equals(c));
+        MsgMap msg = new MsgMap();
+        ObjectMapper objectMapper = new ObjectMapper();
+        System.out.println(objectMapper.writeValueAsString(msg));
     }
 }

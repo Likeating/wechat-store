@@ -1,6 +1,7 @@
 package com.fortwelve.wechatstore.service;
 
 
+import com.fortwelve.wechatstore.dto.ManagerDTO;
 import com.fortwelve.wechatstore.pojo.Manager;
 import com.fortwelve.wechatstore.pojo.ManagerRole;
 

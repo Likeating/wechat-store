@@ -36,6 +36,8 @@ public class OrderServiceImpl implements OrderService {
     PropertyValueMapper valueMapper;
     @Autowired
     ObjectMapper objectMapper;
+    @Autowired
+    PictureMapper pictureMapper;
 
     Logger logger = LoggerFactory.getLogger(this.getClass());
 //    {
@@ -77,6 +79,10 @@ public class OrderServiceImpl implements OrderService {
         Map<String,String> attr=null;
 
         for(OrderDetail orderDetail : orderDetails){
+
+            if(null == orderDetail.getSku_id() || orderDetail.getNum()<=0){
+                throw new OrderException("参数不正确。",701);
+            }
             sku = skuMapper.getSkuById(orderDetail.getSku_id());
             Product product = productMapper.getProductById(sku.getProduct_id());
 
@@ -101,9 +107,11 @@ public class OrderServiceImpl implements OrderService {
             }
             orderDetail.setSku_attr(objectMapper.writeValueAsString(listattr));
             //填写详细订单的商品属性 end
-
+            orderDetail.setProduct_id(product.getProduct_id());
             orderDetail.setProduct_name(product.getProduct_name());
             orderDetail.setSku_price(sku.getSku_price());
+            orderDetail.setPicture(pictureMapper.getPictureById(sku.getPicture_id()).getUrl());
+
             if(sku.getStock()<orderDetail.getNum()){
                 throw new OrderException("库存不足。",606);
             }

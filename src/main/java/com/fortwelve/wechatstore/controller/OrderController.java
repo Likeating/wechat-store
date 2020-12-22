@@ -80,7 +80,7 @@ public class OrderController {
             //加入检查缓存，防止超时未支付
             String id = String.valueOf(orderInfo.getOrder_id());
             stringRedisTemplate.opsForSet().add("check_order_id",id);
-            stringRedisTemplate.opsForHash().put("check_order_hash",id,orderInfo.getCreate_time());
+            stringRedisTemplate.opsForHash().put("check_order_hash",id,String.valueOf(orderInfo.getCreate_time().getTime()));
 
             msg.put("order_id",id);
             msg.put("user_id",orderInfo.getCustomer_id());
@@ -191,12 +191,9 @@ public class OrderController {
             }
             List<OrderDetail> orderDetails = orderService.getAllOrderDetailByOrder_id(new BigInteger(order_id));
 
-            orderMap.put("orderInfo",orderInfo);
-            orderMap.put("orderDetails",orderDetails);
+            msg.put("orderInfo",orderInfo);
+            msg.put("orderDetails",orderDetails);
 
-            linkedList.add(orderMap);
-
-            msg.put("orders",linkedList);
             msg.setMeta("查询成功。",200);
         }catch (Exception e){
             e.printStackTrace();
