@@ -5,6 +5,7 @@ import com.fortwelve.wechatstore.dao.ManagerRoleMapper;
 import com.fortwelve.wechatstore.pojo.Manager;
 import com.fortwelve.wechatstore.pojo.ManagerRole;
 import com.fortwelve.wechatstore.service.ManagerService;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -71,5 +72,10 @@ public class ManagerServiceImpl implements ManagerService {
     @Override
     public Manager getManagerByManagerName(String manager_name) {
         return managerMapper.getManagerByManagerName(manager_name);
+    }
+
+    @Override
+    public List<Manager> getManagerPage(@Param("offset") int offset,@Param("rows") int rows){
+        return managerMapper.getManagerPage(offset,rows);
     }
 }

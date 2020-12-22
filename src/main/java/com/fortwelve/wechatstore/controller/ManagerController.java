@@ -11,6 +11,7 @@ import org.springframework.beans.factory.support.ManagedList;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
+import java.lang.reflect.Array;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -138,7 +139,7 @@ public class ManagerController {
             meta.put("msg","操作成功");
             meta.put("status",200);
 
-            map.put("message",msg);
+            map.put("msg",msg);
             map.put("meta",meta);
 
         }catch (Exception e){
@@ -239,12 +240,10 @@ public class ManagerController {
         return map;
     }
     @GetMapping("/getManager")
-    public Object getManager( HttpServletResponse response){
+    public Object getManager(HttpServletResponse response){
         Map<String,Object> map = new HashMap<>();
         Map<String,Object> meta = new HashMap<>();
         Map<String,Object> msg = new HashMap<>();
-        Map<String,Object> user = new HashMap<>();
-        List<Object> message = new LinkedList();
         try{
 
             List<Manager> managerList=managerService.getAllManager();
@@ -258,6 +257,34 @@ public class ManagerController {
             map.put("message",msg);
             map.put("meta",meta);
         }catch (Exception e){
+            meta.put("msg","服务器出错。");
+            meta.put("status",500);
+            map.put("meta",meta);
+        }
+        return map;
+    }
+
+    @GetMapping("/searchManager")
+    public Object searchManager(int pageSize,int currentPage,HttpServletResponse response){
+        Map<String,Object> map = new HashMap<>();
+        Map<String,Object> meta = new HashMap<>();
+        Map<String,Object> msg = new HashMap<>();
+        try{
+            List<Manager> total=managerService.getAllManager();
+
+            int head=(pageSize*(currentPage-1));
+            List<Manager> managerList=managerService.getManagerPage(head,pageSize);
+
+            msg.put("total",total.size());
+            msg.put("list",managerList);
+
+            meta.put("msg","操作成功");
+            meta.put("status",200);
+
+            map.put("message",msg);
+            map.put("meta",meta);
+        }catch (Exception e){
+            e.printStackTrace();
             meta.put("msg","服务器出错。");
             meta.put("status",500);
             map.put("meta",meta);
