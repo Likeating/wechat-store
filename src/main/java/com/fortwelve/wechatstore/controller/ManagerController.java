@@ -11,7 +11,6 @@ import com.fortwelve.wechatstore.util.JWTUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.beans.factory.support.ManagedList;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -87,11 +86,6 @@ public class ManagerController {
                 msg.setMeta(result.getFieldError().getDefaultMessage(),701);
                 return msg;
             }
-            if(managerService.getManagerByManagerName(managerDTO.getUsername())!=null){
-                msg.setMeta("用户名已经存在。",623);
-                return msg;
-            }
-            //寻找对应角色id
             int id=0;
             boolean find=false;
             List<ManagerRole> managerRoles = managerService.getAllManagerRole();
@@ -252,5 +246,33 @@ public class ManagerController {
             msg.setMeta("服务器出错。",200);
         }
         return msg;
+    }
+
+    @GetMapping("/searchManager")
+    public Object searchManager(int pageSize,int currentPage,HttpServletResponse response){
+        Map<String,Object> map = new HashMap<>();
+        Map<String,Object> meta = new HashMap<>();
+        Map<String,Object> msg = new HashMap<>();
+        try{
+            List<Manager> total=managerService.getAllManager();
+
+            int head=(pageSize*(currentPage-1));
+            List<Manager> managerList=managerService.getManagerPage(head,pageSize);
+
+            msg.put("total",total.size());
+            msg.put("list",managerList);
+
+            meta.put("msg","操作成功");
+            meta.put("status",200);
+
+            map.put("message",msg);
+            map.put("meta",meta);
+        }catch (Exception e){
+            e.printStackTrace();
+            meta.put("msg","服务器出错。");
+            meta.put("status",500);
+            map.put("meta",meta);
+        }
+        return map;
     }
 }

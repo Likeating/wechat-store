@@ -27,4 +27,7 @@ public interface ManagerMapper {
 
     @Select("select * from manager where manager_name=#{manager_name}")
     public Manager getManagerByManagerName(String manager_name);
+
+    @Select("select * from manager limit #{offset},#{rows}")
+    public List<Manager> getManagerPage(@Param("offset") int offset,@Param("rows") int rows);
 }
