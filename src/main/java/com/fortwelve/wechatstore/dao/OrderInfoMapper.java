@@ -22,9 +22,8 @@ public interface OrderInfoMapper {
     @Select("select * from order_info where order_id = #{id}")
     public OrderInfo getOrderInfoById(BigInteger id);
 
-    @Select("select * from order_info")
-    public List<OrderInfo> getAllOrderInfo();
-
+//    @Select("select * from order_info")
+//    public List<OrderInfo> getAllOrderInfo();
 
     //大于小于号要用特殊字符 &gt; &lt; 代替
     //或者是放在 <![CDATA[  表达式  ]]>中
@@ -38,6 +37,6 @@ public interface OrderInfoMapper {
             "<if test='sort == 1'> order by create_time desc</if>"+
             "<if test='sort == 2'> order by create_time asc</if>"+
             "</script>")
-    public List<OrderInfo> getAllOrderInfoByCustomer_idAndOrder_status(BigInteger customer_id,int order_status,int sort);
+    public List<OrderInfo> getAllOrderInfo(BigInteger customer_id,int order_status,int sort);
 
 }

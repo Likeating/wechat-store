@@ -38,7 +38,7 @@ public class HomeController {
         meta.put("msg","获取成功");
         meta.put("status",200);
 
-        map.put("message",msg);
+        map.put("msg",msg);
         map.put("meta",meta);
 
         return map;
@@ -206,7 +206,7 @@ public class HomeController {
         meta.put("msg","获取成功");
         meta.put("status",200);
 
-        map.put("message",message);
+        map.put("msg",message);
         map.put("meta",meta);
         return map;
     }

@@ -1,5 +1,23 @@
 spring:
   profiles:
-    active: prod
+    active: dev
     include:
       jwt
+
+
+  redis:
+    host: localhost
+    port: 6379
+
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 20MB
+
+server:
+  port: 8080
+
+logging:
+  level:
+    com:
+      fortwelve: info

@@ -1,7 +1,9 @@
 package com.fortwelve.wechatstore.controller;
 
+import com.fortwelve.wechatstore.component.MsgMap;
 import com.fortwelve.wechatstore.pojo.Picture;
 import com.fortwelve.wechatstore.service.PictureService;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +18,7 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.util.*;
 
+@Slf4j
 @CrossOrigin
 @RestController
 @RequestMapping("/pictureUpload")
@@ -29,13 +32,9 @@ public class PictureUploadController {
     @Autowired
     PictureService pictureService;
 
-    Logger logger = LoggerFactory.getLogger(this.getClass());
-
     @PostMapping("/upload")
     public Object upload(HttpServletRequest request){
-        Map<String,Object> map = new HashMap<>();
-        Map<String,Object> meta = new HashMap<>();
-        Map<String,Object> msg = new HashMap<>();
+        MsgMap msg = new MsgMap();
 
         List<MultipartFile> files = ((MultipartHttpServletRequest)request).getFiles("picture");
         List<Picture> pictures = new LinkedList<>();
@@ -43,17 +42,13 @@ public class PictureUploadController {
         try {
 
             if (files.size() ==0) {
-                meta.put("msg","请求不正确，没有上传文件。");
-                meta.put("status",701);
-                map.put("meta",meta);
-                return map;
+                msg.setMeta("请求不正确，没有上传文件。",701);
+                return msg;
             }
             for (MultipartFile multipartFile : files){
                 if(multipartFile.isEmpty()){
-                    meta.put("msg","请求不正确，存在空文件。");
-                    meta.put("status",701);
-                    map.put("meta",meta);
-                    return map;
+                    msg.setMeta("请求不正确，存在空文件。",701);
+                    return msg;
                 }
             }
             for (MultipartFile multipartFile : files){
@@ -77,20 +72,13 @@ public class PictureUploadController {
                 pictures.add(picture);
             }
             msg.put("pictures",pictures);
-
-            meta.put("msg","上传成功。");
-            meta.put("status",200);
-
-            map.put("meta",meta);
-            map.put("msg",msg);
+            msg.setMeta("上传成功。",200);
         }catch (Exception e){
-            logger.error(e.getMessage());
+            log.error(e.getMessage());
             e.printStackTrace();
-            meta.put("msg","服务器出错。");
-            meta.put("status",500);
-            map.put("meta",meta);
+            msg.setMeta("服务器出错。",500);
         }
-        return map;
+        return msg;
     }
 
 

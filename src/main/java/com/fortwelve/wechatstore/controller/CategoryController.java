@@ -11,7 +11,7 @@ public class CategoryController {
     @RequestMapping(value = "/categories",produces = "application/json;charset=utf-8")
     public String categories(){
         return "{\n" +
-                "  \"message\": [\n" +
+                "  \"msg\": [\n" +
                 "    {\n" +
                 "      \"cat_id\": 1,\n" +
                 "      \"cat_name\": \"大家电\",\n" +

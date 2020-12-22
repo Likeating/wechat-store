@@ -1,5 +1,7 @@
 package com.fortwelve.wechatstore.controller;
 
+import com.fortwelve.wechatstore.component.MsgMap;
+import com.fortwelve.wechatstore.controller.ValidatedGroup.addManager;
 import com.fortwelve.wechatstore.dto.ManagerDTO;
 import com.fortwelve.wechatstore.pojo.Manager;
 import com.fortwelve.wechatstore.pojo.ManagerRole;
@@ -7,6 +9,8 @@ import com.fortwelve.wechatstore.service.ManagerService;
 import com.fortwelve.wechatstore.util.JWTUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
@@ -78,29 +82,21 @@ public class ManagerController {
         return map;
     }
     @PostMapping("/addManager")
-    public Object addManager(ManagerDTO managerDTO, HttpServletResponse response){
-        Map<String,Object> map = new HashMap<>();
-        Map<String,Object> meta = new HashMap<>();
-        Map<String,Object> msg = new HashMap<>();
+    public Object addManager( @Validated(addManager.class) ManagerDTO managerDTO,BindingResult result, HttpServletResponse response){
+        MsgMap msg = new MsgMap();
 
-        try {
-            //判断字段是否为空
-            if(managerDTO.getUsername()==null ||
-                    managerDTO.getPassword()==null ||
-                    managerDTO.getRealname()==null ||
-                    managerDTO.getEmail()==null ||
-                    managerDTO.getTel()==null ||
-                    managerDTO.getSex()==null ||
-                    managerDTO.getRole()==null){
-            }
-
-
-
-        }catch (Exception e){
-            meta.put("msg","服务器出错。");
-            meta.put("status",500);
-            map.put("meta",meta);
+        if(result.hasErrors()){
+            return result.getFieldError().getDefaultMessage();
         }
-        return map;
+        try {
+            msg.put("manager",managerDTO);
+            msg.setMeta("操作成功。",200);
+        }catch (Exception e){
+            msg.setMeta("服务器出错。",500);
+        }
+        return msg;
     }
+
+
 }
+

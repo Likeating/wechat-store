@@ -3,15 +3,16 @@ package com.fortwelve.wechatstore.controller;
 import com.auth0.jwt.interfaces.Claim;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fortwelve.wechatstore.component.MsgMap;
 import com.fortwelve.wechatstore.pojo.OrderDetail;
 import com.fortwelve.wechatstore.pojo.OrderInfo;
 import com.fortwelve.wechatstore.service.OrderService;
 import com.fortwelve.wechatstore.util.JWTUtils;
 import com.fortwelve.wechatstore.util.OrderException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -25,7 +26,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-
+@Slf4j
 @RestController
 @RequestMapping("/my/order")
 public class OrderController {
@@ -34,19 +35,17 @@ public class OrderController {
     ObjectMapper objectMapper;
     @Autowired
     OrderService orderService;
+    @Autowired
+    StringRedisTemplate stringRedisTemplate;
 
     @Value("${JWTUtils.wx.signature}")
     private String wxSignature;
     @Value("${JWTUtils.wx.minute}")
     private int wxMinute;
 
-    Logger logger = LoggerFactory.getLogger(this.getClass());
-
     @PostMapping("/create")
     public Object create(String consignee_addr, String note, String details, HttpServletRequest request, HttpServletResponse response){
-        Map<String,Object> map = new HashMap<>();
-        Map<String,Object> msg = new HashMap<>();
-        Map<String,Object> meta = new HashMap<>();
+        MsgMap msg = new MsgMap();
 
         try{
             //获取token
@@ -55,22 +54,18 @@ public class OrderController {
             String customerIdstr = tokenMap.get("userId").asString();
 
             if (null == consignee_addr || null == note || null == details || null == customerIdstr){
-                meta.put("msg","请求不正确。");
-                meta.put("status",701);
-                map.put("meta",meta);
-                return map;
+                msg.setMeta("请求不正确。",701);
+                return msg;
             }
             //获取customerId
             BigInteger cutomerId = new BigInteger(customerIdstr);
 
-            System.out.println(details);
-
             LinkedList<OrderDetail> list = objectMapper.readValue(details, new TypeReference<LinkedList<OrderDetail>>() {});
-//            System.out.println(list);
 
-            logger.info("consignee_addr"+consignee_addr);
-            logger.info("details"+list.get(0).toString());
-
+            if(list.size()==0){
+                msg.setMeta("请求不正确。",701);
+                return msg;
+            }
 
             OrderInfo orderInfo = new OrderInfo();
 
@@ -82,36 +77,30 @@ public class OrderController {
             //创建订单
             orderService.createOrder(orderInfo,list);
 
-            msg.put("order_id",orderInfo.getOrder_id());
+            //加入检查缓存，防止超时未支付
+            String id = String.valueOf(orderInfo.getOrder_id());
+            stringRedisTemplate.opsForSet().add("check_order_id",id);
+            stringRedisTemplate.opsForHash().put("check_order_hash",id,orderInfo.getCreate_time());
+
+            msg.put("order_id",id);
             msg.put("user_id",orderInfo.getCustomer_id());
             msg.put("order_price",orderInfo.getPay_price());
             msg.put("consignee_addr",orderInfo.getAddress());
             msg.put("pay_status",orderInfo.getOrder_status());
 
-            meta.put("msg","创建成功。");
-            meta.put("status",200);
-
-            map.put("meta",meta);
-            map.put("msg",msg);
-
+            msg.setMeta("创建成功。",200);
         }catch (OrderException e){
-            meta.put("msg",e.getMessage());
-            meta.put("status",e.getCode());
-            map.put("meta",meta);
+            msg.setMeta(e.getMessage(),e.getCode());
         }catch (Exception e){
             e.printStackTrace();
-            meta.put("msg","服务器出错。");
-            meta.put("status",500);
-            map.put("meta",meta);
+            msg.setMeta("服务器出错。",500);
         }
-        return map;
+        return msg;
     }
 
     @PostMapping("/pay")
     public Object pay(String order_id,HttpServletRequest request){
-        Map<String,Object> map = new HashMap<>();
-        Map<String,Object> msg = new HashMap<>();
-        Map<String,Object> meta = new HashMap<>();
+        MsgMap msg = new MsgMap();
         try{
             //获取token
             String token = request.getHeader("token");
@@ -119,59 +108,39 @@ public class OrderController {
             String customerIdstr = tokenMap.get("userId").asString();
 
             if (null == order_id || null == customerIdstr){
-                meta.put("msg","请求不正确。");
-                meta.put("status",701);
-                map.put("meta",meta);
-                return map;
+                msg.setMeta("请求不正确。",701);
+                return msg;
             }
             //支付，这里直接在service层封装一个接口
-            OrderInfo orderInfo = orderService.payOrderById(
-                    new BigInteger(order_id),
-                    new BigInteger(customerIdstr));
+            BigInteger id = new BigInteger(order_id);
+            orderService.payOrderById(id,new BigInteger(customerIdstr));
+            OrderInfo orderInfo = orderService.getOrderInfoById(id);
 
-            //另一种支付方式
-//            OrderInfo orderInfo1 = orderService.getOrderInfoById(new BigInteger(order_id));
-//            orderService.updateOrderInfo(orderInfo1);
+            //在未支付的缓存中将该记录删除
+            stringRedisTemplate.opsForSet().remove("check_order_id",String.valueOf(id));
+            stringRedisTemplate.opsForHash().delete("check_order_hash",String.valueOf(id));
 
-            if(null == orderInfo){
-                meta.put("msg","服务器出错。");
-                meta.put("status",500);
-                map.put("meta",meta);
-                return map;
-            }
             msg.put("orderInfo",orderInfo);
-            meta.put("msg","支付成功。");
-            meta.put("status",200);
-
-            map.put("meta",meta);
-            map.put("msg",msg);
+            msg.setMeta("支付成功。",200);
         }catch (OrderException e){
-            meta.put("msg",e.getMessage());
-            meta.put("status",e.getCode());
-            map.put("meta",meta);
+            msg.setMeta(e.getMessage(),e.getCode());
         }catch (Exception e){
             e.printStackTrace();
-            meta.put("msg","服务器出错。");
-            meta.put("status",500);
-            map.put("meta",meta);
+            msg.setMeta("服务器出错。",500);
         }
-        return map;
+        return msg;
     }
     @RequestMapping("/all")
     public Object all(Integer type , HttpServletRequest request){
-        Map<String,Object> map = new HashMap<>();
-        Map<String,Object> msg = new HashMap<>();
-        Map<String,Object> meta = new HashMap<>();
+        MsgMap msg = new MsgMap();
         try{
             //获取token
             String token = request.getHeader("token");
             Map<String, Claim> tokenMap = JWTUtils.decode(token,wxSignature);
             String customerIdstr = tokenMap.get("userId").asString();
             if (null == customerIdstr || null == type){
-                meta.put("msg","请求不正确。");
-                meta.put("status",701);
-                map.put("meta",meta);
-                return map;
+                msg.setMeta("请求不正确。",701);
+                return msg;
             }
             int status;
             switch (type){
@@ -184,28 +153,19 @@ public class OrderController {
                 default:
                     status = -1;
             }
-            List<OrderInfo> orderInfos = orderService.getAllOrderInfoByCustomer_idAndOrder_status(new BigInteger(customerIdstr),status,1);
+            List<OrderInfo> orderInfos = orderService.getAllOrderInfo(new BigInteger(customerIdstr),status,1);
 
             msg.put("orderInfos",orderInfos);
-
-            meta.put("msg","查询成功。");
-            meta.put("status",200);
-
-            map.put("meta",meta);
-            map.put("msg",msg);
+            msg.setMeta("查询成功。",200);
         }catch (Exception e){
             e.printStackTrace();
-            meta.put("msg","服务器出错。");
-            meta.put("status",500);
-            map.put("meta",meta);
+            msg.setMeta("服务器出错。",500);
         }
-        return map;
+        return msg;
     }
     @RequestMapping("/checkOrder")
     public Object checkOrder(String order_id,HttpServletRequest request){
-        Map<String,Object> map = new HashMap<>();
-        Map<String,Object> msg = new HashMap<>();
-        Map<String,Object> meta = new HashMap<>();
+        MsgMap msg = new MsgMap();
 
         Map<String,Object> orderMap = new HashMap<>();
         LinkedList<Map<String,Object>> linkedList = new LinkedList<>();
@@ -215,18 +175,21 @@ public class OrderController {
             //获取token
             String token = request.getHeader("token");
             Map<String, Claim> tokenMap = JWTUtils.decode(token,wxSignature);
-            String customerIdstr = tokenMap.get("userId").asString();
 
-            if (null == customerIdstr || null == order_id){
-                meta.put("msg","请求不正确。");
-                meta.put("status",701);
-                map.put("meta",meta);
-                return map;
+            if (null == order_id){
+                msg.setMeta("请求不正确。",701);
+                return msg;
             }
 
             OrderInfo orderInfo = orderService.getOrderInfoById(new BigInteger(order_id));
 
-            List<OrderDetail> orderDetails = orderService.getAllOrderDetailByOrder_id(new BigInteger(order_id),new BigInteger(customerIdstr));
+            //确保用户只能查看自己订单
+            BigInteger customerId = new BigInteger(tokenMap.get("userId").asString());
+            if(!orderInfo.getCustomer_id().equals(customerId)){
+                msg.setMeta("无权操作订单。",611);
+                return msg;
+            }
+            List<OrderDetail> orderDetails = orderService.getAllOrderDetailByOrder_id(new BigInteger(order_id));
 
             orderMap.put("orderInfo",orderInfo);
             orderMap.put("orderDetails",orderDetails);
@@ -234,18 +197,11 @@ public class OrderController {
             linkedList.add(orderMap);
 
             msg.put("orders",linkedList);
-
-            meta.put("msg","查询成功。");
-            meta.put("status",200);
-
-            map.put("meta",meta);
-            map.put("msg",msg);
+            msg.setMeta("查询成功。",200);
         }catch (Exception e){
             e.printStackTrace();
-            meta.put("msg","服务器出错。");
-            meta.put("status",500);
-            map.put("meta",meta);
+            msg.setMeta("服务器出错。",500);
         }
-        return map;
+        return msg;
     }
 }

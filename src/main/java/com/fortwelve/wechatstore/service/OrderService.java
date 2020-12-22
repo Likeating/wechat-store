@@ -17,26 +17,34 @@ public interface OrderService {
      */
     int addOrderInfo(OrderInfo orderInfo);
     int updateOrderInfo(OrderInfo orderInfo);
-    int deleteOrderInfoById(BigInteger id);
-    OrderInfo getOrderInfoById(BigInteger id);
-    List<OrderInfo> getAllOrderInfo();
 
     /**
-     * 创建订单
+     * 原则上，订单不允许删除，只允许改变状态，5.（无效订单） 等同于 删除
+     * @param id
+     * @return
+     */
+    int deleteOrderInfoById(BigInteger id);
+    OrderInfo getOrderInfoById(BigInteger id);
+//    List<OrderInfo> getAllOrderInfo();
+
+
+    /**
+     * 创建订单，并扣除相关商品库存
      * @param orderInfo 订单主要信息
      * @param orderDetails 订单商品详细信息，可以包括多个商品
-     * @return 成功返回true
+     * @throws OrderException
+     * @throws JsonProcessingException
      */
-    boolean createOrder(OrderInfo orderInfo,List<OrderDetail> orderDetails) throws OrderException, JsonProcessingException;
+    void createOrder(OrderInfo orderInfo,List<OrderDetail> orderDetails) throws OrderException, JsonProcessingException;
+
 
     /**
      * 订单支付
      * @param id 订单id
      * @param customer_id 客户id
-     * @return 支付后的订单主信息
      * @throws OrderException
      */
-    OrderInfo payOrderById(BigInteger id,BigInteger customer_id)throws OrderException;
+    void payOrderById(BigInteger id,BigInteger customer_id)throws OrderException;
 
     /**
      * 查询该客户所有订单
@@ -46,13 +54,20 @@ public interface OrderService {
      * @param sort 排序方式 0.不排序 1.desc 降序 2.asc升序
      * @return 所有订单主信息
      */
-    List<OrderInfo> getAllOrderInfoByCustomer_idAndOrder_status(BigInteger customer_id,int order_status,int sort);
+    List<OrderInfo> getAllOrderInfo(BigInteger customer_id,int order_status,int sort);
 
     /**
      * 查询订单详细信息
      * @param order_id
      * @return 订单详细信息
      */
-    List<OrderDetail> getAllOrderDetailByOrder_id(BigInteger order_id,BigInteger customer_id) throws OrderException;
+    List<OrderDetail> getAllOrderDetailByOrder_id(BigInteger order_id);
+
+    /**
+     * 关闭订单，并恢复相关商品库存
+     * @param order_id
+     * @return
+     */
+    void closeOrderById(BigInteger order_id) throws OrderException;
 
 }

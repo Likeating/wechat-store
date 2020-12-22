@@ -2,6 +2,7 @@ package com.fortwelve.wechatstore.controller;
 
 import com.auth0.jwt.interfaces.Claim;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fortwelve.wechatstore.component.MsgMap;
 import com.fortwelve.wechatstore.dto.Code2SessionDTO;
 import com.fortwelve.wechatstore.dto.UserInfoDTO;
 import com.fortwelve.wechatstore.pojo.Customer;
@@ -47,9 +48,7 @@ public class UserController {
 
     @PostMapping("/login")
     public Object login(String code, HttpServletResponse response){
-        Map<String,Object> map = new HashMap<>();
-        Map<String,Object> msg = new HashMap<>();
-        Map<String,Object> meta = new HashMap<>();
+        MsgMap msg = new MsgMap();
 
         Map<String,String> tokenMap = new HashMap<>();
         Customer customer;
@@ -67,47 +66,36 @@ public class UserController {
                     //返回包含了code的token，以便于注册用户功能
                     tokenMap.put("code",code);
                     response.setHeader("token",JWTUtils.getToken(tokenMap,wxSignature,wxMinute));
-
-                    meta.put("msg","未注册");
-                    meta.put("status",604);
-                    map.put("meta",meta);
-                    return map;
+                    msg.put("code",code);
+                    msg.setMeta("未注册。" ,604);
+                    return msg;
                 }
+                //登录成功，且已经注册的用户
+
+                UserInfoDTO userInfoDTO = customerService.CustomerToUserInfo(customer);
+
+                tokenMap.put("userId", String.valueOf(userInfoDTO.getUserId()));
+                tokenMap.put("nickName", userInfoDTO.getNickName());
+
+                response.setHeader("token",JWTUtils.getToken(tokenMap,wxSignature,wxMinute));
+
+                msg.put("userInfo", userInfoDTO);
+                msg.setMeta("登录成功。",200);
+
             }else {
-                meta.put("msg","登录失败！"+ code2SessionDTO.getErrmsg());
-                meta.put("status", code2SessionDTO.getErrcode());
-                map.put("meta",meta);
-                return map;
+                msg.setMeta("登录失败！"+ code2SessionDTO.getErrmsg(),code2SessionDTO.getErrcode());
             }
 
         }catch (IOException e){
             e.printStackTrace();
-            meta.put("msg","服务器出错。");
-            meta.put("status",500);
-            return map;
+            msg.setMeta("服务器出错。",500);
         }
-        //登录成功，且已经注册的用户
-
-        UserInfoDTO userInfoDTO = customerService.CustomerToUserInfo(customer);
-
-        tokenMap.put("userId", String.valueOf(userInfoDTO.getUserId()));
-        tokenMap.put("nickName", userInfoDTO.getNickName());
-
-        response.setHeader("token",JWTUtils.getToken(tokenMap,wxSignature,wxMinute));
-
-        msg.put("userInfo", userInfoDTO);
-        meta.put("msg","登录成功");
-        meta.put("status",200);
-        map.put("meta",meta);
-        map.put("message",msg);
-        return map;
+        return msg;
     }
 
     @PostMapping("/register")
     public Object register(String rawData, String signature, String encryptedData, String iv, HttpServletRequest request,HttpServletResponse response){
-        Map<String,Object> map = new HashMap<>();
-        Map<String,Object> msg = new HashMap<>();
-        Map<String,Object> meta = new HashMap<>();
+        MsgMap msg = new MsgMap();
         Map<String,String> tokenMap = new HashMap<>();
 
         ObjectMapper objectMapper = new ObjectMapper();
@@ -117,10 +105,8 @@ public class UserController {
             String token = request.getHeader("token");
 
             if (null == token || token.equals("")){
-                meta.put("msg","token无效，请重新注册。");
-                meta.put("status",601);
-                map.put("meta",meta);
-                return map;
+                msg.setMeta("token无效，请重新注册。",601);
+                return msg;
             }
             Map<String, Claim> claimMap = JWTUtils.decode(token,wxSignature);
             String code = claimMap.get("code").asString();
@@ -132,10 +118,8 @@ public class UserController {
 
             //数据校验
             if (!wxapi.getSHA1(rawData+session_key).equals(signature)){
-                meta.put("msg","签名不一致或信息遭到篡改。");
-                meta.put("status",605);
-                map.put("meta",meta);
-                return map;
+                msg.setMeta("签名不一致或信息遭到篡改。",605);
+                return msg;
             }
             //校验通过，注册
             UserInfoDTO userInfoDTO = objectMapper.readValue(rawData, UserInfoDTO.class);
@@ -153,18 +137,12 @@ public class UserController {
 
             logger.info("新用户："+ userInfoDTO.getNickName());
 
-
             msg.put("userInfo", userInfoDTO);
-            meta.put("msg","登录成功");
-            meta.put("status",200);
-            map.put("meta",meta);
-            map.put("message",msg);
+            msg.setMeta("登录成功。",200);
         }catch (Exception e){
             e.printStackTrace();
-            meta.put("msg","服务器出错。");
-            meta.put("status",500);
-            map.put("meta",meta);
+            msg.setMeta("服务器出错。",500);
         }
-        return map;
+        return msg;
     }
 }
