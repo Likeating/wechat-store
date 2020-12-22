@@ -216,23 +216,36 @@ public class ManagerController {
         }
         return msg;
     }
-    @GetMapping("/getAllManager")
-    public Object getAllManager(){
+    @RequestMapping("/getManagers")
+    public Object getManagers(Integer currentPage,Integer pageSize){
         MsgMap msg = new MsgMap();
         try{
+            List<Manager> managerList;
+            if(pageSize==null){
+                managerList=managerService.getAllManager();
+            }else {
+                int current;
+                if(currentPage==null || currentPage<0){
+                    current=1;
+                }else{
+                    current=currentPage;
+                }
+                int head=(pageSize*(current-1));
+                managerList=managerService.getManagerPage(head,pageSize);
+                msg.put("currentPage",current);
 
-            List<Manager> managerList=managerService.getAllManager();
-
+            }
             msg.put("total",managerList.size());
             msg.put("list",managerList);
 
             msg.setMeta("操作成功。",200);
         }catch (Exception e){
+            log.info("getManagers出错："+e.getMessage());
             msg.setMeta("服务器出错。",200);
         }
         return msg;
     }
-    @GetMapping("/getAllRole")
+    @RequestMapping("/getAllRole")
     public Object getAllRole(){
         MsgMap msg = new MsgMap();
         try{
@@ -248,31 +261,4 @@ public class ManagerController {
         return msg;
     }
 
-    @GetMapping("/searchManager")
-    public Object searchManager(int pageSize,int currentPage,HttpServletResponse response){
-        Map<String,Object> map = new HashMap<>();
-        Map<String,Object> meta = new HashMap<>();
-        Map<String,Object> msg = new HashMap<>();
-        try{
-            List<Manager> total=managerService.getAllManager();
-
-            int head=(pageSize*(currentPage-1));
-            List<Manager> managerList=managerService.getManagerPage(head,pageSize);
-
-            msg.put("total",total.size());
-            msg.put("list",managerList);
-
-            meta.put("msg","操作成功");
-            meta.put("status",200);
-
-            map.put("message",msg);
-            map.put("meta",meta);
-        }catch (Exception e){
-            e.printStackTrace();
-            meta.put("msg","服务器出错。");
-            meta.put("status",500);
-            map.put("meta",meta);
-        }
-        return map;
-    }
 }

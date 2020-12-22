@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.util.DigestUtils;
 
 import java.io.IOException;
 import java.math.BigInteger;
@@ -63,8 +64,7 @@ class WechatStoreApplicationTests {
 
     @Test
     void Test01() throws IOException, NoSuchAlgorithmException {
-        MsgMap msg = new MsgMap();
-        ObjectMapper objectMapper = new ObjectMapper();
-        System.out.println(objectMapper.writeValueAsString(msg));
+        String md5Str = DigestUtils.md5DigestAsHex("中国".getBytes("ISO-8859-1"));
+        System.out.println(md5Str);
     }
 }
