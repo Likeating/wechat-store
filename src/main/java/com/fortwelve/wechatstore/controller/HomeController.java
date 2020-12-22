@@ -17,23 +17,27 @@ public class HomeController {
         Map<String,Object> meta = new HashMap<>();
         List<Object> msg = new ArrayList<>();
 
-        msgbody.put("image_src","https://api-hmugo-web.itheima.net/pyg/banner1.png");
+        msgbody.put("image_src","https://s3.ax1x.com/2020/12/03/D7yH2V");
         msgbody.put("open_type","navigate");
         msgbody.put("goods_id",129);
         msgbody.put("navigator_url","/pages/goods_detail/index?goods_id=129");
         msg.add(msgbody);
 
-        msgbody.put("image_src","https://api-hmugo-web.itheima.net/pyg/banner2.png");
-        msgbody.put("open_type","navigate");
-        msgbody.put("goods_id",130);
-        msgbody.put("navigator_url","/pages/goods_detail/index?goods_id=130");
-        msg.add(msgbody);
+        Map<String,Object> msgbody2 = new HashMap<>();
 
-        msgbody.put("image_src","https://api-hmugo-web.itheima.net/pyg/banner3.png");
-        msgbody.put("open_type","navigate");
-        msgbody.put("goods_id",131);
-        msgbody.put("navigator_url","/pages/goods_detail/index?goods_id=131");
-        msg.add(msgbody);
+        msgbody2.put("image_src","https://s3.ax1x.com/2020/12/03/D7ybvT.jpg");
+        msgbody2.put("open_type","navigate");
+        msgbody2.put("goods_id",130);
+        msgbody2.put("navigator_url","/pages/goods_detail/index?goods_id=130");
+        msg.add(msgbody2);
+
+        Map<String,Object> msgbody3 = new HashMap<>();
+
+        msgbody3.put("image_src","https://s3.ax1x.com/2020/12/03/D7yLKU.jpg");
+        msgbody3.put("open_type","navigate");
+        msgbody3.put("goods_id",131);
+        msgbody3.put("navigator_url","/pages/goods_detail/index?goods_id=131");
+        msg.add(msgbody3);
 
         meta.put("msg","获取成功");
         meta.put("status",200);
@@ -58,7 +62,7 @@ public class HomeController {
         Map<String,Object> product5 = new HashMap<>();
 
         floor_title.put("name","时尚女装");
-        floor_title.put("image_src","https://api-hmugo-web.itheima.net/pyg/pic_floor01_title.png");
+        floor_title.put("image_src","https://s3.ax1x.com/2020/12/18/rY3Pr4.png");
         tmp.put("floor_title",floor_title);
 
         product1.put("name","优质服饰");
@@ -109,7 +113,7 @@ public class HomeController {
         Map<String,Object> product24 = new HashMap<>();
         Map<String,Object> product25 = new HashMap<>();
         floor_title2.put("name","户外活动");
-        floor_title2.put("image_src","https://api-hmugo-web.itheima.net/pyg/pic_floor02_title.png");
+        floor_title2.put("image_src","https://s3.ax1x.com/2020/12/18/rY3kZ9.png");
         tmp2.put("floor_title",floor_title2);
 
         product21.put("name","勇往直前");
@@ -160,8 +164,8 @@ public class HomeController {
         Map<String,Object> product34 = new HashMap<>();
         Map<String,Object> product35 = new HashMap<>();
 
-        floor_title3.put("name","箱包配饰");
-        floor_title3.put("image_src","https://api-hmugo-web.itheima.net/pyg/pic_floor03_title.png");
+        floor_title3.put("name","当月热销");
+        floor_title3.put("image_src","https://s3.ax1x.com/2020/12/18/rY3iqJ.png");
         tmp3.put("floor_title",floor_title3);
 
         product31.put("name","清新气质");

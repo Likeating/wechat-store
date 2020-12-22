@@ -20,5 +20,5 @@ public class Sku {
   private BigDecimal sku_price;
   private int stock;
   private BigInteger picture_id;
-
 }
+
