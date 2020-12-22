@@ -10,10 +10,10 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/home")
+//@RequestMapping("/home")
 public class CategoryController {
-    @RequestMapping("/categories")
-    //@RequestMapping(value = "/categories",produces = "application/json;charset=utf-8")
+    //@RequestMapping("/categories")
+    @RequestMapping(value = "/categories",produces = "application/json;charset=utf-8")
     public Object categories(){
         Map<String,Object> map = new HashMap<>();
         Map<String,Object> meta = new HashMap<>();
@@ -34,7 +34,7 @@ public class CategoryController {
         category.put("cat_pid",0);
         category.put("cat_icon","");
 
-        list.put("cat","男");
+        list.put("cat_name","男");
 
         cate1.put("cat_id",5);
         cate1.put("cat_name","衬衫");
@@ -78,7 +78,7 @@ public class CategoryController {
         category2.put("cat_pid",0);
         category2.put("cat_icon","");
 
-        list2.put("cat","女");
+        list2.put("cat_name","女");
 
         cate21.put("cat_id",9);
         cate21.put("cat_name","T恤");
@@ -95,6 +95,7 @@ public class CategoryController {
         cate24.put("cat_id",12);
         cate24.put("cat_name","羽绒");
         cate24.put("cat_icon","https://s3.ax1x.com/2020/12/16/r1UmKe.jpg");
+
         cate_list2.add(cate21);
         cate_list2.add(cate22);
         cate_list2.add(cate23);
@@ -118,7 +119,7 @@ public class CategoryController {
         category3.put("cat_pid",0);
         category3.put("cat_icon","");
 
-        list3.put("cat","当月新品");
+        list3.put("cat_name","当月新品");
 
         cate31.put("cat_id",13);
         cate31.put("cat_name","联名新品");
@@ -148,7 +149,7 @@ public class CategoryController {
         category4.put("cat_pid",0);
         category4.put("cat_icon","");
 
-        list4.put("cat","当月热销");
+        list4.put("cat_name","当月热销");
 
         cate41.put("cat_id",15);
         cate41.put("cat_name","上衣");
@@ -171,7 +172,7 @@ public class CategoryController {
         meta.put("msg","获取成功");
         meta.put("status",200);
 
-        map.put("message",msg);
+        map.put("msg",msg);
         map.put("meta",meta);
 
         return map;
