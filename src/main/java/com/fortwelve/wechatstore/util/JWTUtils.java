@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Calendar;
 import java.util.Map;
+import java.util.Random;
 
 public class JWTUtils {
 
@@ -30,5 +31,15 @@ public class JWTUtils {
     }
     public static DecodedJWT verify(String token,String signature){
         return JWT.require(Algorithm.HMAC256(signature)).build().verify(token);
+    }
+    public static String getRandomString(int length){
+        String str="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        Random random=new Random();
+        StringBuffer s=new StringBuffer();
+        for(int i=0;i<length;i++){
+            int number=random.nextInt(62);
+            s.append(str.charAt(number));
+        }
+        return s.toString();
     }
 }

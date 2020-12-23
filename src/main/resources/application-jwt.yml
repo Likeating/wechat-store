@@ -4,7 +4,7 @@ JWTUtils:
     minute: 300
   manager:
     signature: "managerSignature"
-    minute: 300
+    minute: 10080
 
 OrderCheck:
   unpaid: #未支付订单检查
@@ -18,3 +18,6 @@ WXApi:
 Picture:
   pattern: "/img/**"
   path: "/data/img/"
+
+Manager:
+  codeTTL: 120 #code码的存活时间，单位：秒

@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -39,9 +40,21 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addInterceptor(new JWTInterceptor(wxSignature,wxMinute))
                 .addPathPatterns("/my/**");
 
-//        registry.addInterceptor(new JWTInterceptor(managerSignature,managerMinute))
-//                .addPathPatterns("/manager/**");
+        registry.addInterceptor(new JWTInterceptor(managerSignature,managerMinute))
+                .addPathPatterns("/manager/**")
+                .excludePathPatterns("/manager/verify")
+                .excludePathPatterns("/manager/login");
 
+    }
+
+    @Override
+    public void addCorsMappings(CorsRegistry registry) {
+        registry.addMapping("/**")
+//                .allowedOrigins("*")
+                .allowedOriginPatterns("*")
+                .allowCredentials(true)
+                .allowedMethods("GET","POST","PUT","DELETE")
+                .maxAge(3600);
     }
 
     @Override

@@ -64,7 +64,7 @@ class WechatStoreApplicationTests {
 
     @Test
     void Test01() throws IOException, NoSuchAlgorithmException {
-        String md5Str = DigestUtils.md5DigestAsHex("中国".getBytes("ISO-8859-1"));
+        String md5Str = DigestUtils.md5DigestAsHex("字符串".getBytes("utf-8"));
         System.out.println(md5Str);
     }
 }
