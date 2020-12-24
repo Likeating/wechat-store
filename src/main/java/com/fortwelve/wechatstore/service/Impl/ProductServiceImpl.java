@@ -12,12 +12,15 @@ import com.fortwelve.wechatstore.util.OrderException;
 import com.fortwelve.wechatstore.util.ProductUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigInteger;
+import java.sql.Timestamp;
 import java.util.*;
 
-@Transactional(rollbackFor = Exception.class)
+
+@Transactional(isolation = Isolation.REPEATABLE_READ,rollbackFor = Exception.class)
 @Service
 public class ProductServiceImpl implements ProductService {
     @Autowired
@@ -279,6 +282,8 @@ public class ProductServiceImpl implements ProductService {
             product.setPicture_id(picture_main.getPicture_id());
             product.setPreview_id(pictureList_preview.getId());
             product.setDetail_id(pictureList_detail.getId());
+            //设置上架时间
+            product.setAdd_time(new Timestamp(System.currentTimeMillis()));
             //保存商品
             if(0 == productMapper.addProduct(product)){
                 throw new OrderException("商品添加失败：主信息保存失败。",631);

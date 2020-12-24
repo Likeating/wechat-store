@@ -54,10 +54,8 @@ class WechatStoreApplicationTests {
 
     @Test
     void test01()  {
-        String [] pictureIdArray = "1_2_".split("_");
-        for(String pid : pictureIdArray){
-            System.out.println("1"+pid+"1");
-        }
+        System.out.println(orderService.getAllOrderInfo(null, null, null));
+
     }
 
 }

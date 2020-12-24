@@ -1,7 +1,7 @@
 JWTUtils:
   wx:
     signature: "wxSignature"
-    minute: 300
+    minute: 10080
   manager:
     signature: "managerSignature"
     minute: 10080

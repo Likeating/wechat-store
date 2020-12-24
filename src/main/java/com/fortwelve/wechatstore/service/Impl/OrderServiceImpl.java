@@ -19,7 +19,7 @@ import java.sql.Timestamp;
 import java.util.*;
 
 @Service("orderService")
-@Transactional(isolation = Isolation.REPEATABLE_READ)
+@Transactional(isolation = Isolation.REPEATABLE_READ,rollbackFor = Exception.class)
 public class OrderServiceImpl implements OrderService {
 
     @Autowired
@@ -168,7 +168,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<OrderInfo> getAllOrderInfo(BigInteger customer_id,int order_status,int sort) {
+    public List<OrderInfo> getAllOrderInfo(BigInteger customer_id,Integer order_status,Integer sort) {
         return orderInfoMapper.getAllOrderInfo(customer_id,order_status,sort);
     }
 
