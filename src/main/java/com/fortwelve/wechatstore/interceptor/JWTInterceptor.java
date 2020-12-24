@@ -51,7 +51,7 @@ public class JWTInterceptor implements HandlerInterceptor {
         Map<String,Object> meta = new HashMap<>();
 
         try {
-            if(null != token){
+            if(null != token && !token.equals("")){
                 JWTUtils.verify(token,signature);
                 return true;
             }

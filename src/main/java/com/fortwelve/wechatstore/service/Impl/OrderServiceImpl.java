@@ -77,7 +77,6 @@ public class OrderServiceImpl implements OrderService {
         BigDecimal payPrice=new BigDecimal("0");
 
         Map<String,String> attr=null;
-
         for(OrderDetail orderDetail : orderDetails){
 
             if(null == orderDetail.getSku_id() || orderDetail.getNum()<=0){
@@ -115,11 +114,15 @@ public class OrderServiceImpl implements OrderService {
             if(sku.getStock()<orderDetail.getNum()){
                 throw new OrderException("库存不足。",606);
             }
+            //减少库存
             sku.setStock(sku.getStock()-orderDetail.getNum());
+            //增加销量
+            product.setSale(product.getSale()+orderDetail.getNum());
             totalPrice=totalPrice.add(
                     sku.getSku_price().multiply(BigDecimal.valueOf(orderDetail.getNum()))
             );
             skuMapper.updateSku(sku);
+            productMapper.updateProduct(product);
         }
         orderInfo.setTotal_price(totalPrice);
         //实际支付价格=总价格+运费
@@ -142,6 +145,7 @@ public class OrderServiceImpl implements OrderService {
                 throw new OrderException("订单操作失败。",612);
             }
         }
+
     }
 
 
@@ -191,11 +195,16 @@ public class OrderServiceImpl implements OrderService {
         List<OrderDetail> orderDetailList = orderDetailMapper.getAllOrderDetailByOrder_id(order_id);
 
         Sku sku;
-        //恢复库存
+        Product product;
         for(OrderDetail orderDetail : orderDetailList){
             sku = skuMapper.getSkuById(orderDetail.getSku_id());
+            product = productMapper.getProductById(orderDetail.getProduct_id());
+
+            //恢复库存
             sku.setStock(sku.getStock()+orderDetail.getNum());
-            if (skuMapper.updateSku(sku)==0){
+            //恢复销量
+            product.setSale(product.getSale()-orderDetail.getNum());
+            if (skuMapper.updateSku(sku)==0 || productMapper.updateProduct(product)==0){
                 throw new OrderException("订单操作失败。",612);
             }
         }

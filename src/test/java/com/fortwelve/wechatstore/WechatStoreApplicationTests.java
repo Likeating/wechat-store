@@ -2,6 +2,7 @@ package com.fortwelve.wechatstore;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fortwelve.wechatstore.component.MsgMap;
+import com.fortwelve.wechatstore.dto.ProductPropertiesDTO;
 import com.fortwelve.wechatstore.pojo.OrderDetail;
 import com.fortwelve.wechatstore.pojo.Product;
 import com.fortwelve.wechatstore.service.OrderService;
@@ -64,7 +65,13 @@ class WechatStoreApplicationTests {
 
     @Test
     void Test01() throws IOException, NoSuchAlgorithmException {
-        String md5Str = DigestUtils.md5DigestAsHex("字符串".getBytes("utf-8"));
-        System.out.println(md5Str);
+        List<String> list = new LinkedList<>();
+        list.add("男");
+        List<ProductPropertiesDTO> productPropertiesDTOS = productService.searchProductPage(list,null,4,null,4);
+        System.out.println(productPropertiesDTOS);
+        for (ProductPropertiesDTO tmp:productPropertiesDTOS) {
+            System.out.println("商品id：" + tmp.getGoods_id() + " 价格：" + tmp.getGoods_price() + " 销量：" + tmp.getSale());
+
+        }
     }
 }

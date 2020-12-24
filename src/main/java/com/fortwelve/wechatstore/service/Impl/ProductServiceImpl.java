@@ -10,6 +10,8 @@ import com.fortwelve.wechatstore.pojo.Sku;
 import com.fortwelve.wechatstore.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigInteger;
 import java.util.HashMap;
@@ -68,10 +70,13 @@ public class ProductServiceImpl implements ProductService {
                 product.getProduct_name(),
                 product.getPrice(),
                 product.getCategory_id(),
-                skuMapper.getStockByProductId(product.getProduct_id()),
                 product.getAdd_time(),
                 product.getDelete_time(),
-                pictureMapper.getPictureById(product.getPicture_id()).getUrl());
+                product.getState(),
+                pictureMapper.getPictureById(product.getPicture_id()).getUrl(),
+                skuMapper.getStockByProductId(product.getProduct_id()),
+                product.getSale()
+        );
     }
 
     @Override
@@ -85,8 +90,8 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<ProductPropertiesDTO> searchProductPage(List<String> query, int pagenum, int pagesize) {
-        List<Product> products = productMapper.searchProductPage(query,pagenum,pagesize);
+    public List<ProductPropertiesDTO> searchProductPage(List<String> keywords,Integer cid,Integer sort,Integer offset, Integer rows){
+        List<Product> products = productMapper.searchProductPage(keywords,cid,sort,offset,rows);
         List<ProductPropertiesDTO> productPropertiesList = new LinkedList<>();
 
         for(Product product:products){

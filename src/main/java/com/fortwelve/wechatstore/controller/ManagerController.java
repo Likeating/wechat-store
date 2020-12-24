@@ -101,23 +101,19 @@ public class ManagerController {
             //设置token
             response.setHeader("token",token);
             //返回管理员信息
-            msg.put("id",manager.getId());
-            msg.put("username",manager.getManager_name());
-            msg.put("realname",manager.getRealname());
-            msg.put("email",manager.getEmail());
-            msg.put("tel",manager.getTel());
-            msg.put("sex",manager.getSex());
-            msg.put("role",managerRole.getRole_name());
-
-
+            manager.setManager_password(null);//密码清空
+            ManagerDTO managerDTO = managerService.getManagerDTO(manager);
+            msg.put("manager",managerDTO);
             msg.setMeta("登录成功。",200);
         }catch (Exception e){
-//            e.printStackTrace();
+            e.printStackTrace();
             log.info("login出错："+e.getMessage());
             msg.setMeta("服务器出错。",500);
         }
         return msg;
     }
+
+
     @PostMapping("/addManager")
     public Object addManager(@Validated(addManager.class) ManagerDTO managerDTO, BindingResult result, HttpServletRequest request){
         MsgMap msg = new MsgMap();
@@ -141,18 +137,14 @@ public class ManagerController {
                 return msg;
             }
 
-            int id=0;
-            boolean find=false;
-            List<ManagerRole> managerRoles = managerService.getAllManagerRole();
-            for(ManagerRole tmp:managerRoles){
-                if(managerDTO.getRole().equals(tmp.getRole_name())){
-                    id=tmp.getRole_id();
-                    find=true;
-                    break;
-                }
-            }
-            if(find == false){
+            ManagerRole managerRole = managerService.getManagerRoleById(managerDTO.getRoleId());
+
+            if(managerRole == null){
                 msg.setMeta("请求不正确：不存在该角色。",701);
+                return msg;
+            }
+            if(managerRole.getRole_name().equals("超级管理员")){
+                msg.setMeta("没有权限添加超级管理员。",611);
                 return msg;
             }
             Manager manager=new Manager();
@@ -162,7 +154,7 @@ public class ManagerController {
             manager.setEmail(managerDTO.getEmail());
             manager.setTel(managerDTO.getTel());
             manager.setSex(managerDTO.getSex());
-            manager.setRole_id(id);
+            manager.setRole_id(managerDTO.getRoleId());
 
             if(managerService.addManager(manager)==0){
                 log.info("addManager出错：添加管理员失败。");
@@ -170,18 +162,14 @@ public class ManagerController {
                 return msg;
             }
 
-            msg.put("id",manager.getId());
-            msg.put("username",manager.getManager_name());
-            msg.put("realname",manager.getRealname());
-            msg.put("email",manager.getEmail());
-            msg.put("tel",manager.getTel());
-            msg.put("sex",manager.getSex());
-            msg.put("role",managerDTO.getRole());
-
+            //返回管理员信息
+            manager.setManager_password(null);//密码清空
+            msg.put("manager",managerService.getManagerDTO(manager));
             msg.setMeta("添加成功。",200);
 
         }catch (Exception e){
-            log.info("addManager出错："+e.getMessage());
+            e.printStackTrace();
+            log.info("/manager/addManager出错："+e.getMessage());
             msg.setMeta("服务器出错。",500);
         }
         return msg;
@@ -200,13 +188,13 @@ public class ManagerController {
                 msg.setMeta(result.getFieldError().getDefaultMessage(),701);
                 return msg;
             }
-            Manager manager=managerService.getManagerByManagerName(managerDTO.getUsername());
+            Manager manager = managerService.getManagerByManagerName(managerDTO.getUsername());
             if(manager == null){
                 msg.setMeta("管理员不存在。",621);
                 return msg;
             }
             if(!role.equals("超级管理员")){
-                //如果不是超级管理员，就判断修改的管理员信息是否是本人
+                //如果不是超级管理员，就判断修改的管理员信息是否是自己
                 if(!userName.equals(manager.getManager_name())){
                     //既不是超级管理员，又不是修改自己信息，就不允许
                     msg.setMeta("没有权限修改他人信息。",611);
@@ -232,36 +220,29 @@ public class ManagerController {
             if(managerDTO.getSex() != null ){
                 manager.setSex(managerDTO.getSex());
             }
-            if(managerDTO.getRole() != null ){
-                ManagerRole managerRole=null;
-                List<ManagerRole> managerRoles = managerService.getAllManagerRole();
-
-                for(ManagerRole tmp:managerRoles){
-                    if(managerDTO.getRole().equals(tmp.getRole_name())){
-                        managerRole=tmp;
-                        break;
-                    }
+            if(managerDTO.getRoleId() != null ){
+                if(!role.equals("超级管理员")){
+                    msg.setMeta("没有权限修改角色。",611);
+                    return msg;
                 }
+                //超级管理员才能走到这
+                ManagerRole managerRole = managerService.getManagerRoleById(manager.getRole_id());
+                ManagerRole roleAfter=managerService.getManagerRoleById(managerDTO.getRoleId());
 
-                if(managerRole == null){
+                if(roleAfter == null){
                     msg.setMeta("请求不正确：不存在该角色。",701);
                     return msg;
                 }
-                if(managerRole.getRole_id()!=manager.getRole_id()){
-                    //角色不一致，修改角色
-                    //超级管理员可以修改任意人信息，但不能修改自己角色
-                    //其他管理员不可以修改角色
-                    if(role.equals("超级管理员")){
-                        if(userName.equals(manager.getManager_name())){
-                            msg.setMeta("超级管理员不能修改自己角色。",611);
-                            return msg;
-                        }
-                    }else {
-                        msg.setMeta("没有权限修改角色。",611);
-                        return msg;
-                    }
-                    manager.setRole_id(managerRole.getRole_id());
+                //“原角色”或“修改后角色” 二者之一是超级管理员就不行
+                if(managerRole.getRole_name().equals("超级管理员")){
+                    msg.setMeta("没有权限修改超级管理员的角色。",611);
+                    return msg;
                 }
+                if(roleAfter.getRole_name().equals("超级管理员")){
+                    msg.setMeta("没有权限将角色修改为超级管理员。",611);
+                    return msg;
+                }
+                manager.setRole_id(managerDTO.getRoleId());
             }
 
             if(managerService.updateManager(manager)==0){
@@ -269,20 +250,20 @@ public class ManagerController {
                 return msg;
             }
 
-            msg.put("id",manager.getId());
-            msg.put("manager_name",manager.getManager_name());
-            msg.put("realname",manager.getRealname());
-            msg.put("email",manager.getEmail());
-            msg.put("tel",manager.getTel());
-            msg.put("sex",manager.getSex());
-            msg.put("role",managerService.getManagerRoleById(manager.getRole_id()).getRole_name());
+            //返回管理员信息
+            manager.setManager_password(null);//密码清空
+            msg.put("manager",managerService.getManagerDTO(manager));
 
             msg.setMeta("修改成功。",200);
         }catch(Exception e){
+            e.printStackTrace();
+            log.info("/manager/updateManager出错："+e.getMessage());
             msg.setMeta("服务器出错。",500);
         }
         return msg;
     }
+
+
     @PostMapping("/deleteManager")
     public Object deleteManager(@RequestParam int id, HttpServletRequest request){
         MsgMap msg = new MsgMap();
@@ -300,7 +281,7 @@ public class ManagerController {
                 msg.setMeta("管理员不存在。",621);
                 return msg;
             }
-            ManagerRole managerRole = managerService.getManagerRoleById(manager.getId());
+            ManagerRole managerRole = managerService.getManagerRoleById(manager.getRole_id());
             if(managerRole.getRole_name().equals("超级管理员")){
                 msg.setMeta("没有权限删除超级管理员。",611);
                 return msg;
@@ -312,10 +293,14 @@ public class ManagerController {
             msg.put("操作成功",200);
 
         }catch (Exception e){
+            e.printStackTrace();
+            log.info("/manager/deleteManager出错："+e.getMessage());
             msg.setMeta("服务器出错。",500);
         }
         return msg;
     }
+
+
     @RequestMapping("/getManagers")
     public Object getManagers(Integer currentPage,Integer pageSize){
         MsgMap msg = new MsgMap();
@@ -343,8 +328,9 @@ public class ManagerController {
 
             msg.setMeta("操作成功。",200);
         }catch (Exception e){
-            log.info("getManagers出错："+e.getMessage());
-            msg.setMeta("服务器出错。",200);
+            e.printStackTrace();
+            log.info("/manager/getManagers出错："+e.getMessage());
+            msg.setMeta("服务器出错。",500);
         }
         return msg;
     }
@@ -359,7 +345,9 @@ public class ManagerController {
 
             msg.setMeta("操作成功。",200);
         }catch (Exception e){
-            msg.setMeta("服务器出错。",200);
+            e.printStackTrace();
+            log.info("/manager/getAllRole出错："+e.getMessage());
+            msg.setMeta("服务器出错。",500);
         }
         return msg;
     }

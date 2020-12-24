@@ -35,12 +35,16 @@ public interface ProductService {
 
     /**
      * 模糊查询，返回ProductProperties列表
-     * @param query
-     * @param pagenum
-     * @param pagesize
+     * @param keywords 关键字
+     * @param cid 可以空，按分类查找
+     * @param sort 排序方式，null，不排序
+     *             价格排序 ：1.desc 降序 2.asc升序
+     *             销量排序 ：3.desc 降序 4.asc升序
+     * @param offset 起始位置，可以空，但rows为空，此参数也不会生效
+     * @param rows 数量，可以空
      * @return
      */
-    List<ProductPropertiesDTO> searchProductPage(List<String> query, int pagenum, int pagesize);
+    List<ProductPropertiesDTO> searchProductPage(List<String> keywords,Integer cid,Integer sort,Integer offset, Integer rows);
 
     /**
      * 获取商品详细数据
