@@ -1,9 +1,12 @@
 package com.fortwelve.wechatstore;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fortwelve.wechatstore.component.MsgMap;
 import com.fortwelve.wechatstore.dto.ProductPropertiesDTO;
 import com.fortwelve.wechatstore.pojo.OrderDetail;
+import com.fortwelve.wechatstore.pojo.Picture;
+import com.fortwelve.wechatstore.pojo.PictureList;
 import com.fortwelve.wechatstore.pojo.Product;
 import com.fortwelve.wechatstore.service.OrderService;
 import com.fortwelve.wechatstore.service.ProductService;
@@ -50,28 +53,11 @@ class WechatStoreApplicationTests {
     OrderCheckerThread orderCheckerThread;
 
     @Test
-    void testProduct(){
-//        Timestamp timestamp = Timestamp.valueOf("2020-11-30 17:57:33");
-        Calendar calendar = Calendar.getInstance();
-        System.out.println(calendar.getTime());
-        Product product = productService.getProductById(BigInteger.valueOf(1));
-        System.out.println(product);
-        product.setAdd_time(new Timestamp(calendar.getTimeInMillis()));
-        productService.addProduct(product);
-        System.out.println(product);
-    }
-
-
-
-    @Test
-    void Test01() throws IOException, NoSuchAlgorithmException {
-        List<String> list = new LinkedList<>();
-        list.add("男");
-        List<ProductPropertiesDTO> productPropertiesDTOS = productService.searchProductPage(list,null,4,null,4);
-        System.out.println(productPropertiesDTOS);
-        for (ProductPropertiesDTO tmp:productPropertiesDTOS) {
-            System.out.println("商品id：" + tmp.getGoods_id() + " 价格：" + tmp.getGoods_price() + " 销量：" + tmp.getSale());
-
+    void test01()  {
+        String [] pictureIdArray = "1_2_".split("_");
+        for(String pid : pictureIdArray){
+            System.out.println("1"+pid+"1");
         }
     }
+
 }

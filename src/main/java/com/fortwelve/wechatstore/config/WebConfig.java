@@ -47,7 +47,10 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addInterceptor(new JWTInterceptor(managerSignature,managerMinute))
                 .addPathPatterns("/manager/**")
                 .excludePathPatterns("/manager/verify")
-                .excludePathPatterns("/manager/login");
+                .excludePathPatterns("/manager/login")
+                .addPathPatterns("/category/**")
+                .excludePathPatterns("/category/getCategory");
+
 
     }
 
@@ -62,17 +65,17 @@ public class WebConfig implements WebMvcConfigurer {
 //                .maxAge(3600);
 //    }
     //改用下面这种或者自己写filter
-//    @Bean
-//    public CorsFilter corsFilter(){
-//        CorsConfiguration config = new CorsConfiguration();
-//        config.addAllowedHeader("*");
-//        config.addAllowedMethod("*");
-//        config.addAllowedOrigin("*");
-//        config.addExposedHeader("token");
-//        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-//        source.registerCorsConfiguration("/**",config);
-//        return new CorsFilter(source);
-//    }
+    @Bean
+    public CorsFilter corsFilter(){
+        CorsConfiguration config = new CorsConfiguration();
+        config.addAllowedHeader("*");
+        config.addAllowedMethod("*");
+        config.addAllowedOrigin("*");
+        config.addExposedHeader("token");
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**",config);
+        return new CorsFilter(source);
+    }
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {

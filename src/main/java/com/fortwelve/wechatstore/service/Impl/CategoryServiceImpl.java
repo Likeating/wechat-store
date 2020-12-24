@@ -2,6 +2,7 @@ package com.fortwelve.wechatstore.service.Impl;
 
 import com.fortwelve.wechatstore.dao.CategoryMapper;
 import com.fortwelve.wechatstore.pojo.Category;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.fortwelve.wechatstore.service.CategoryService;
@@ -36,5 +37,10 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public List<Category> getAllCategory() {
         return categoryMapper.getAllCategory();
+    }
+
+    @Override
+    public List<Category> getCategoryPage(@Param("offset") int offset, @Param("rows") int rows){
+        return categoryMapper.getCategoryPage(offset,rows);
     }
 }

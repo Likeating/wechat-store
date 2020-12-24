@@ -3,6 +3,7 @@ package com.fortwelve.wechatstore.controller;
 
 import com.fortwelve.wechatstore.component.MsgMap;
 import com.fortwelve.wechatstore.dto.ProductPropertiesDTO;
+import com.fortwelve.wechatstore.pojo.Product;
 import com.fortwelve.wechatstore.service.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,11 +34,24 @@ public class GoodsController {
                 System.out.println(str);
                 keywords =Arrays.asList(str.split("\\s+"));
             }
-            List<ProductPropertiesDTO> productPropertiesList = productService.searchProductPage(keywords,cid,sort,pagenum,pagesize);
-
+            Integer start = null;
+            if(null != pagenum){
+                if(pagenum < 1){
+                    pagenum = 1;
+                }
+                start = (pagenum - 1)*5;
+            }else {
+                pagenum = 1;
+            }
+            List<Product> productList = productService.searchProductPage(keywords,cid,sort,start,pagesize);
+            List<ProductPropertiesDTO> productPropertiesList = new LinkedList<>();
+            for(Product tmp : productList){
+                productPropertiesList.add(productService.getProductProperties(tmp));
+            }
+            int totalNum = productService.searchProductPage(keywords,cid,sort,null,null).size();
             msg.setMeta("获取成功。",200);
             msg.put("pagenum",pagenum);
-            msg.put("total",productPropertiesList.size());
+            msg.put("total",totalNum);
             msg.put("product",productPropertiesList);
 
         }catch (Exception e){
@@ -47,8 +61,25 @@ public class GoodsController {
         }
         return msg;
     }
+
+
     @RequestMapping("/detail")
     public Object detail(Integer goods_id) {
+        MsgMap msg = new MsgMap();
+        try {
+            msg.put("productDetail",productService.getProductDetail(BigInteger.valueOf(goods_id)));
+            msg.setMeta("获取成功。",200);
+        }catch (Exception e){
+            e.printStackTrace();
+            log.info("/goods/detail出错："+e.getMessage());
+            msg.setMeta("服务器出错。",500);
+        }
+        return msg;
+    }
+
+
+    @RequestMapping("/addGoods")
+    public Object addGoods(Integer goods_id) {
         MsgMap msg = new MsgMap();
         try {
             msg.put("productDetail",productService.getProductDetail(BigInteger.valueOf(goods_id)));

@@ -323,7 +323,7 @@ public class ManagerController {
             for (Manager tmp : managerList){
                 tmp.setManager_password(null);
             }
-            msg.put("total",managerList.size());
+            msg.put("total",managerService.getAllManager().size());
             msg.put("list",managerList);
 
             msg.setMeta("操作成功。",200);

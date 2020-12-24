@@ -24,4 +24,6 @@ public interface CategoryMapper {
     @Select("select * from category")
     public List<Category> getAllCategory();
 
+    @Select("select * from category limit #{offset},#{rows}")
+    public List<Category> getCategoryPage(@Param("offset") int offset,@Param("rows") int rows);
 }
