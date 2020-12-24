@@ -235,7 +235,8 @@ public class ManagerController {
                 msg.put("currentPage",current);
 
             }
-            msg.put("total",managerList.size());
+            //msg.put("total",managerList.size());
+            msg.put("total",managerService.getAllManager().size());
             msg.put("list",managerList);
 
             msg.setMeta("操作成功。",200);

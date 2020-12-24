@@ -45,7 +45,7 @@ public class CategoryController {
                 map.put("picture",picture.getUrl());
                 list.add(map);
             }
-            msg.put("catagories",list);
+            msg.put("categories",list);
             msg.setMeta("获取成功。",200);
         }catch (Exception e){
             System.out.println(e);
