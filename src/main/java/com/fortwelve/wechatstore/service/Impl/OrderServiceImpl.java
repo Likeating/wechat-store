@@ -6,6 +6,7 @@ import com.fortwelve.wechatstore.dao.*;
 import com.fortwelve.wechatstore.pojo.*;
 import com.fortwelve.wechatstore.service.OrderService;
 import com.fortwelve.wechatstore.util.OrderException;
+import org.apache.ibatis.annotations.Param;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -200,4 +201,5 @@ public class OrderServiceImpl implements OrderService {
             }
         }
     }
+
 }

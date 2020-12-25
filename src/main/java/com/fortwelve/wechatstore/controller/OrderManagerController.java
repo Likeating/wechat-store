@@ -128,7 +128,9 @@ public class OrderManagerController {
     public Object orderCommit(BigInteger order_id){
         MsgMap msg = new MsgMap();
         try{
-            if(orderService.updateOrderInfoStatus(2,order_id)==0){
+            OrderInfo orderInfo=orderService.getOrderInfoById(order_id);
+            orderInfo.setOrder_status(2);
+            if(orderService.updateOrderInfo(orderInfo)==0){
                 msg.setMeta("修改状态失败。",500);
                 return msg;
             }

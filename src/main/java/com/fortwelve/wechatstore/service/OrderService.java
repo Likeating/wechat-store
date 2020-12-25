@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fortwelve.wechatstore.pojo.OrderDetail;
 import com.fortwelve.wechatstore.pojo.OrderInfo;
 import com.fortwelve.wechatstore.util.OrderException;
+import org.apache.ibatis.annotations.Param;
 
 import java.math.BigInteger;
 import java.util.List;
@@ -69,5 +70,7 @@ public interface OrderService {
      * @return
      */
     void closeOrderById(BigInteger order_id) throws OrderException;
+
+    public int updateOrderInfoStatus(@Param("order_status")int order_status, @Param("order_id")BigInteger order_id);
 
 }
