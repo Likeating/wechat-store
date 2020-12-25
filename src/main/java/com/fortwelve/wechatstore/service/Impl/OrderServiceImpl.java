@@ -168,8 +168,8 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<OrderInfo> getAllOrderInfo(BigInteger customer_id,Integer order_status,Integer sort) {
-        return orderInfoMapper.getAllOrderInfo(customer_id,order_status,sort);
+    public List<OrderInfo> getAllOrderInfo(BigInteger customer_id,Integer order_status,Integer sort,Integer offset, Integer rows) {
+        return orderInfoMapper.getAllOrderInfo(customer_id,order_status,sort,offset,rows);
     }
 
     @Override
@@ -207,6 +207,15 @@ public class OrderServiceImpl implements OrderService {
             if (skuMapper.updateSku(sku)==0 || productMapper.updateProduct(product)==0){
                 throw new OrderException("订单操作失败。",612);
             }
+        }
+    }
+
+    @Override
+    public void updateOrderStatus(BigInteger order_id, int status) throws OrderException {
+        OrderInfo orderInfo = orderInfoMapper.getOrderInfoById(order_id);
+        orderInfo.setOrder_status(status);
+        if(0 == orderInfoMapper.updateOrderInfo(orderInfo)){
+            throw new OrderException("订单操作失败。",612);
         }
     }
 }

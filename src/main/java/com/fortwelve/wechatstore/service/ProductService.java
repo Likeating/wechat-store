@@ -71,5 +71,17 @@ public interface ProductService {
      */
     List<String> getPictureUrlList(BigInteger id);
 
+    /**
+     * 添加商品
+     * @param productDTO
+     * @throws OrderException
+     */
     void addProduct(ProductDTO productDTO) throws OrderException;
+
+    /**
+     * 修改商品
+     * @param productDTO
+     * @throws OrderException
+     */
+    void updateProduct(ProductDTO productDTO) throws OrderException;
 }

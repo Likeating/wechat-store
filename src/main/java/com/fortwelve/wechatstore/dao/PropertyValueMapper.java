@@ -9,11 +9,11 @@ import java.util.List;
 @Mapper
 public interface PropertyValueMapper {
 
-    @Insert("insert into property_value (value_name,picture_id) values (#{value_name},#{picture_id})")
+    @Insert("insert into property_value (product_id,value_name,picture_id) values (#{product_id},#{value_name},#{picture_id})")
     @Options(useGeneratedKeys = true,keyProperty = "value_id",keyColumn = "value_id")
     public int addPropertyValue(PropertyValue propertyValue);
 
-    @Update("update property_value set value_name=#{value_name},picture_id=#{picture_id} where value_id=#{value_id}")
+    @Update("update property_value set product_id=#{product_id},value_name=#{value_name},picture_id=#{picture_id} where value_id=#{value_id}")
     public int updatePropertyValue(PropertyValue propertyValue);
 
     @Delete("delete from property_value where value_id=#{id}")
@@ -24,4 +24,7 @@ public interface PropertyValueMapper {
 
     @Select("select * from property_value")
     public List<PropertyValue> getAllPropertyValue();
+
+    @Select("select * from property_value where product_id=#{product_id}")
+    public List<PropertyValue> getAllPropertyValueByProduct_id(BigInteger product_id);
 }

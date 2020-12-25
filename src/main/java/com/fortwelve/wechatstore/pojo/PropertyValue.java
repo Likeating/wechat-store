@@ -14,6 +14,7 @@ import java.math.BigInteger;
 public class PropertyValue {
 
   private BigInteger value_id;
+  private BigInteger product_id;
   private String value_name;
   private BigInteger picture_id;
 

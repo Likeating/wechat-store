@@ -42,7 +42,8 @@ public interface OrderInfoMapper {
                 "<if test='sort == 1'> order by create_time desc</if>"+
                 "<if test='sort == 2'> order by create_time asc</if>"+
             "</if>"+
+            "<if test='rows!=null'> limit <if test='offset!=null'>#{offset},</if>#{rows}</if>"+
             "</script>")
-    public List<OrderInfo> getAllOrderInfo(BigInteger customer_id,Integer order_status,Integer sort);
+    public List<OrderInfo> getAllOrderInfo(BigInteger customer_id,Integer order_status,Integer sort,Integer offset, Integer rows);
 
 }

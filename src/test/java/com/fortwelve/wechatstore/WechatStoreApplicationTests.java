@@ -54,7 +54,7 @@ class WechatStoreApplicationTests {
 
     @Test
     void test01()  {
-        System.out.println(orderService.getAllOrderInfo(null, null, null));
+//        System.out.println(orderService.getAllOrderInfo(null, null, null));
 
     }
 

@@ -56,7 +56,7 @@ public interface OrderService {
      *             1.desc 降序 2.asc升序
      * @return 所有订单主信息
      */
-    List<OrderInfo> getAllOrderInfo(BigInteger customer_id,Integer order_status,Integer sort);
+    List<OrderInfo> getAllOrderInfo(BigInteger customer_id,Integer order_status,Integer sort,Integer offset, Integer rows);
 
     /**
      * 查询订单详细信息
@@ -72,4 +72,5 @@ public interface OrderService {
      */
     void closeOrderById(BigInteger order_id) throws OrderException;
 
+    void updateOrderStatus(BigInteger order_id,int status) throws OrderException;
 }

@@ -147,4 +147,29 @@ public class ProductController {
         }
         return msg;
     }
+
+    @PostMapping("/updateProduct")
+    public Object updateProduct(@Validated(addProduct.class) @RequestBody ProductDTO productDTO, BindingResult result){
+        MsgMap msg = new MsgMap();
+
+        try{
+            //验证字段
+            if (result.hasErrors()){
+                msg.setMeta(result.getFieldError().getDefaultMessage(),701);
+                return msg;
+            }
+            productService.addProduct(productDTO);
+            msg.put("product",productDTO);
+            msg.setMeta("添加成功。",200);
+        }catch (OrderException e){
+            e.printStackTrace();
+            log.info("/product/updateProduct出错："+e.getMessage());
+            msg.setMeta(e.getMessage(),e.getCode());
+        }catch (Exception e){
+            e.printStackTrace();
+            log.info("/product/updateProduct出错："+e.getMessage());
+            msg.setMeta("服务器出错。",500);
+        }
+        return msg;
+    }
 }

@@ -132,7 +132,7 @@ public class OrderController {
         return msg;
     }
     @RequestMapping("/all")
-    public Object all(Integer type , HttpServletRequest request){
+    public Object all(Integer type ,Integer offset, Integer rows, HttpServletRequest request){
         MsgMap msg = new MsgMap();
         try{
             //获取token
@@ -154,7 +154,7 @@ public class OrderController {
                 default:
                     status = -1;
             }
-            List<OrderInfo> orderInfos = orderService.getAllOrderInfo(new BigInteger(customerIdstr),status,1);
+            List<OrderInfo> orderInfos = orderService.getAllOrderInfo(new BigInteger(customerIdstr),status,1,offset,rows);
 
             msg.put("orderInfos",orderInfos);
             msg.setMeta("查询成功。",200);
