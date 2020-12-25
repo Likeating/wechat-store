@@ -19,7 +19,7 @@ import java.io.InputStream;
 import java.util.*;
 
 @Slf4j
-@CrossOrigin
+//@CrossOrigin
 @RestController
 @RequestMapping("/pictureUpload")
 public class PictureUploadController {

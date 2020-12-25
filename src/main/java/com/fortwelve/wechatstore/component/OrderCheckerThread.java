@@ -43,7 +43,7 @@ public class OrderCheckerThread extends Thread{
             HashOperations<String,String,String> opsForHash = stringRedisTemplate.opsForHash();
 
             List<OrderInfo> orderInfoList = orderService.
-                    getAllOrderInfo(new BigInteger("1"),0,1);
+                    getAllOrderInfo(null,null,null,null,null);
 
             log.info("数据库未支付订单数量："+orderInfoList.size());
 

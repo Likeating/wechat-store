@@ -2,6 +2,7 @@ package com.fortwelve.wechatstore.service.Impl;
 
 import com.fortwelve.wechatstore.dao.ManagerMapper;
 import com.fortwelve.wechatstore.dao.ManagerRoleMapper;
+import com.fortwelve.wechatstore.dto.ManagerDTO;
 import com.fortwelve.wechatstore.pojo.Manager;
 import com.fortwelve.wechatstore.pojo.ManagerRole;
 import com.fortwelve.wechatstore.service.ManagerService;
@@ -77,5 +78,18 @@ public class ManagerServiceImpl implements ManagerService {
     @Override
     public List<Manager> getManagerPage(@Param("offset") int offset,@Param("rows") int rows){
         return managerMapper.getManagerPage(offset,rows);
+    }
+
+    @Override
+    public ManagerDTO getManagerDTO(Manager manager) {
+        return new ManagerDTO(
+                manager.getId(),
+                manager.getManager_name(),
+                manager.getManager_password(),
+                manager.getRealname(),
+                manager.getEmail(),
+                manager.getTel(),
+                manager.getSex(),
+                manager.getRole_id());
     }
 }

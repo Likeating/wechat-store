@@ -14,6 +14,7 @@ import java.math.BigInteger;
 public class PropertyKey {
 
   private BigInteger key_id;
+  private BigInteger product_id;
   private String key_name;
   private boolean isPicture;
 

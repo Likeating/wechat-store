@@ -33,7 +33,7 @@ public class ManagerDTO {
     @Pattern(regexp = "[男女]",message = "性别必须是“男”或者“女”。",groups = {addManager.class, updateManager.class})
     @NotBlank(message = "性别不能为空。",groups = {addManager.class})
     private String sex;
-    @Pattern(regexp = "\\S{1,20}",message = "请输入正确的角色名。",groups = {addManager.class, updateManager.class})
-    @NotBlank(message = "角色不能为空。",groups = {addManager.class})
-    private String role;
+//    @Pattern(regexp = "\\S{1,20}",message = "请输入正确的角色名。",groups = {addManager.class, updateManager.class})
+    @NotNull(message = "角色不能为空。",groups = {addManager.class})
+    private Integer roleId;
 }

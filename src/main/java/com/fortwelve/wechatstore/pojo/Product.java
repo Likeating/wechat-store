@@ -25,5 +25,6 @@ public class Product {
   private BigInteger picture_id;
   private BigInteger preview_id;
   private BigInteger detail_id;
+  private int sale;
 
 }

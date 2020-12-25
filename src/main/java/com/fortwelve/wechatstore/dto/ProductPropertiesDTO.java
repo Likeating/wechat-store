@@ -20,10 +20,12 @@ public class ProductPropertiesDTO {
     private String goods_name;
     private BigDecimal goods_price;
     private int cat_id;
-    private int goods_number;
     @JsonFormat(pattern = "yyyy-MM-dd hh:mm:ss")
     private Timestamp add_time;
     @JsonFormat(pattern = "yyyy-MM-dd hh:mm:ss")
     private Timestamp delete_time;
-    private String picture_url;
+    private String state;//描述
+    private String picture_url;//主图
+    private int goods_number;//库存
+    private int sale;//销量
 }

@@ -1,12 +1,17 @@
 package com.fortwelve.wechatstore.config;
 
 import com.fortwelve.wechatstore.interceptor.JWTInterceptor;
-import com.fortwelve.wechatstore.util.JWTUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -39,9 +44,37 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addInterceptor(new JWTInterceptor(wxSignature,wxMinute))
                 .addPathPatterns("/my/**");
 
-//        registry.addInterceptor(new JWTInterceptor(managerSignature,managerMinute))
-//                .addPathPatterns("/manager/**");
+        registry.addInterceptor(new JWTInterceptor(managerSignature,managerMinute))
+                .addPathPatterns("/manager/**")
+                .excludePathPatterns("/manager/verify")
+                .excludePathPatterns("/manager/login")
+                .addPathPatterns("/category/**")
+                .excludePathPatterns("/category/getCategory");
 
+
+    }
+
+    //此方法会使Interceptor失效，原因是请求先进入Interceptor
+//    @Override
+//    public void addCorsMappings(CorsRegistry registry) {
+//        registry.addMapping("/**")
+//                .allowedOriginPatterns("*")
+//                .allowCredentials(true)
+//                .exposedHeaders("token")
+//                .allowedMethods("GET","POST","PUT","DELETE")
+//                .maxAge(3600);
+//    }
+    //改用下面这种或者自己写filter
+    @Bean
+    public CorsFilter corsFilter(){
+        CorsConfiguration config = new CorsConfiguration();
+        config.addAllowedHeader("*");
+        config.addAllowedMethod("*");
+        config.addAllowedOrigin("*");
+        config.addExposedHeader("token");
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**",config);
+        return new CorsFilter(source);
     }
 
     @Override

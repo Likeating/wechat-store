@@ -1,8 +1,12 @@
 package com.fortwelve.wechatstore;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fortwelve.wechatstore.component.MsgMap;
+import com.fortwelve.wechatstore.dto.ProductPropertiesDTO;
 import com.fortwelve.wechatstore.pojo.OrderDetail;
+import com.fortwelve.wechatstore.pojo.Picture;
+import com.fortwelve.wechatstore.pojo.PictureList;
 import com.fortwelve.wechatstore.pojo.Product;
 import com.fortwelve.wechatstore.service.OrderService;
 import com.fortwelve.wechatstore.service.ProductService;
@@ -49,22 +53,9 @@ class WechatStoreApplicationTests {
     OrderCheckerThread orderCheckerThread;
 
     @Test
-    void testProduct(){
-//        Timestamp timestamp = Timestamp.valueOf("2020-11-30 17:57:33");
-        Calendar calendar = Calendar.getInstance();
-        System.out.println(calendar.getTime());
-        Product product = productService.getProductById(BigInteger.valueOf(1));
-        System.out.println(product);
-        product.setAdd_time(new Timestamp(calendar.getTimeInMillis()));
-        productService.addProduct(product);
-        System.out.println(product);
+    void test01()  {
+//        System.out.println(orderService.getAllOrderInfo(null, null, null));
+
     }
 
-
-
-    @Test
-    void Test01() throws IOException, NoSuchAlgorithmException {
-        String md5Str = DigestUtils.md5DigestAsHex("中国".getBytes("ISO-8859-1"));
-        System.out.println(md5Str);
-    }
 }

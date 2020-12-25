@@ -23,4 +23,6 @@ public interface ManagerService {
 
     Manager getManagerByManagerName(String manager_name);
     List<Manager> getManagerPage(@Param("offset") int offset,@Param("rows") int rows);
+
+    ManagerDTO getManagerDTO(Manager manager);
 }
