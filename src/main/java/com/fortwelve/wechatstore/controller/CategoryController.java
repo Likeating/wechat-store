@@ -1,16 +1,23 @@
 package com.fortwelve.wechatstore.controller;
 
+import com.auth0.jwt.interfaces.Claim;
 import com.fortwelve.wechatstore.component.MsgMap;
 import com.fortwelve.wechatstore.dto.CategoryDTO;
 import com.fortwelve.wechatstore.pojo.Category;
 import com.fortwelve.wechatstore.pojo.Picture;
 import com.fortwelve.wechatstore.service.CategoryService;
 import com.fortwelve.wechatstore.service.PictureService;
+import com.fortwelve.wechatstore.util.JWTUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -27,30 +34,42 @@ public class CategoryController {
     @Autowired
     PictureService pictureService;
 
+    @Value("${JWTUtils.manager.signature}")
+    private String managerSignature;
+    @Value("${JWTUtils.manager.minute}")
+    private int managerMinute;
+
     @PostMapping("/addCategory")
-    public Object addCategory(CategoryDTO categoryDTO, HttpServletResponse response){
+    public Object addCategory(@Valid @RequestBody CategoryDTO categoryDTO, BindingResult result, HttpServletRequest request){
         MsgMap msg = new MsgMap();
 
         try{
-            if(categoryDTO.getCategory_name()==null){
-                msg.setMeta("请求不正确。",701);
+            if(result.hasErrors()){
+                msg.setMeta(result.getFieldError().getDefaultMessage(),701);
+                return msg;
+            }
+            //权限判断
+            String token = request.getHeader("token");
+            Map<String, Claim> tokenMap = JWTUtils.decode(token,managerSignature);
+            String role = tokenMap.get("role").asString();
+            if(!role.equals("超级管理员") && !role.equals("商品管理员")){
+                msg.setMeta("没有权限操作。",611);
                 return msg;
             }
 
             Category category=new Category();
-            //category.setCategory_id(categoryDTO.getCategory_id());
             category.setCategory_name(categoryDTO.getCategory_name());
-            category.setPicture_id(categoryDTO.getPicture_id());
+            category.setPicture_id(categoryDTO.getPicture().getPicture_id());
 
             if(categoryService.addCategory(category)==0){
-                msg.setMeta("服务器出错。",500);
+                msg.setMeta("添加商品分类失败。",641);
                 return msg;
             }
-
-            msg.put("category_id",category.getCategory_id());
-            msg.put("category_name",categoryDTO.getCategory_name());
-            msg.put("picture",pictureService.getPictureById(categoryDTO.getPicture_id()).getUrl());
-
+            //更新主键
+            categoryDTO.setCategory_id(category.getCategory_id());
+            //更新图片信息
+            categoryDTO.setPicture(pictureService.getPictureById(category.getPicture_id()));
+            msg.put("category",categoryDTO);
             msg.setMeta("操作成功。",200);
         }catch (Exception e){
             e.printStackTrace();
@@ -62,28 +81,38 @@ public class CategoryController {
     }
 
     @PostMapping("/updateCategory")
-    public Object updateCategory(CategoryDTO categoryDTO, HttpServletResponse response){
+    public Object updateCategory(@Valid @RequestBody CategoryDTO categoryDTO, BindingResult result, HttpServletRequest request){
         MsgMap msg = new MsgMap();
         try{
-            if(categoryDTO.getCategory_name()==null){
-                msg.setMeta("请求不正确。",701);
+            if(result.hasErrors()){
+                msg.setMeta(result.getFieldError().getDefaultMessage(),701);
                 return msg;
             }
-
+            if(categoryDTO.getCategory_id() == null){
+                msg.setMeta("分类ID不能为空。",200);
+                return msg;
+            }
+            //权限判断
+            String token = request.getHeader("token");
+            Map<String, Claim> tokenMap = JWTUtils.decode(token,managerSignature);
+            String role = tokenMap.get("role").asString();
+            if(!role.equals("超级管理员") && !role.equals("商品管理员")){
+                msg.setMeta("没有权限操作。",611);
+                return msg;
+            }
             Category category=new Category();
             category.setCategory_id(categoryDTO.getCategory_id());
             category.setCategory_name(categoryDTO.getCategory_name());
-            category.setPicture_id(categoryDTO.getPicture_id());
+            category.setPicture_id(categoryDTO.getPicture().getPicture_id());
+
             if(categoryService.updateCategory(category)==0){
-                msg.setMeta("服务器出错。",500);
+                msg.setMeta("修改商品分类失败。",642);
                 return msg;
             }
-
-            msg.put("category_id",categoryDTO.getCategory_id());
-            msg.put("category_name",categoryDTO.getCategory_name());
-            msg.put("picture",pictureService.getPictureById(categoryDTO.getPicture_id()).getUrl());
-
-            msg.setMeta("操作成功",200);
+            //更新图片信息
+            categoryDTO.setPicture(pictureService.getPictureById(category.getPicture_id()));
+            msg.put("category",categoryDTO);
+            msg.setMeta("操作成功。",200);
         }catch (Exception e){
             e.printStackTrace();
             log.info("/category/updateCategory出错："+e.getMessage());
@@ -96,7 +125,7 @@ public class CategoryController {
     @RequestMapping("/getCategory")
     public Object getCategory(Integer currentPage,Integer pageSize){
         Map<String,Object> map;
-        List<Object> list = new LinkedList<>();
+        List<CategoryDTO> list = new LinkedList<>();
         MsgMap msg = new MsgMap();
         try{
 
@@ -105,25 +134,26 @@ public class CategoryController {
             if(pageSize==null){
                 categoryList=categoryService.getAllCategory();
             }else {
-                int current;
-                if(currentPage==null || currentPage<0){
+                Integer current;
+                if(currentPage==null || currentPage<=0){
                     current=1;
                 }else{
                     current=currentPage;
                 }
-                int head=(pageSize*(current-1));
+                Integer head=(pageSize*(current-1));
                 categoryList=categoryService.getCategoryPage(head,pageSize);
                 msg.put("currentPage",current);
             }
             for(int i=0;i<categoryList.size();i++) {
                 BigInteger id =categoryList.get(i).getPicture_id();
-                Picture picture = new Picture();
-                picture = pictureService.getPictureById(id);
-                map = new HashMap<>();
-                map.put("id",categoryList.get(i).getCategory_id());
-                map.put("name",categoryList.get(i).getCategory_name());
-                map.put("picture",picture.getUrl());
-                list.add(map);
+                Picture picture = pictureService.getPictureById(id);
+
+                CategoryDTO categoryDTO = new CategoryDTO();
+                categoryDTO.setCategory_id(categoryList.get(i).getCategory_id());
+                categoryDTO.setCategory_name(categoryList.get(i).getCategory_name());
+                categoryDTO.setPicture(picture);
+
+                list.add(categoryDTO);
             }
 
             msg.put("total",categoryService.getAllCategory().size());
@@ -138,11 +168,19 @@ public class CategoryController {
         return msg;
     }
 
-    @PostMapping("/deleteCategory")
-    public Object deleteCategory(int id,HttpServletResponse response){
+    @RequestMapping("/deleteCategory")
+    public Object deleteCategory(@RequestParam int category_id,HttpServletRequest request){
         MsgMap msg = new MsgMap();
         try{
-            if(categoryService.deleteCategoryById(id)==0){
+            //权限判断
+            String token = request.getHeader("token");
+            Map<String, Claim> tokenMap = JWTUtils.decode(token,managerSignature);
+            String role = tokenMap.get("role").asString();
+            if(!role.equals("超级管理员") && !role.equals("商品管理员")){
+                msg.setMeta("没有权限操作。",611);
+                return msg;
+            }
+            if(categoryService.deleteCategoryById(category_id)==0){
                 msg.setMeta("删除失败。",500);
                 return msg;
             }

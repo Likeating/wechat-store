@@ -20,4 +20,4 @@ server:
 logging:
   level:
     com:
-      fortwelve: info
+      fortwelve: debug

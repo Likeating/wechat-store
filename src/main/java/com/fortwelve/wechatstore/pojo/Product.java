@@ -18,13 +18,13 @@ public class Product {
   private BigInteger product_id;
   private String product_name;
   private BigDecimal price;
-  private int category_id;
+  private Integer category_id;
   private Timestamp add_time;
   private Timestamp delete_time;
   private String state;
   private BigInteger picture_id;
   private BigInteger preview_id;
   private BigInteger detail_id;
-  private int sale;
+  private Integer sale;
 
 }

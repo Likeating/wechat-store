@@ -4,11 +4,13 @@ import com.fortwelve.wechatstore.dto.ProductDTO;
 import com.fortwelve.wechatstore.dto.ProductDetailDTO;
 import com.fortwelve.wechatstore.dto.ProductPropertiesDTO;
 import com.fortwelve.wechatstore.dto.SkuPropertiesDTO;
+import com.fortwelve.wechatstore.pojo.Picture;
 import com.fortwelve.wechatstore.pojo.Product;
 import com.fortwelve.wechatstore.pojo.Sku;
 import com.fortwelve.wechatstore.util.OrderException;
 
 import java.math.BigInteger;
+import java.util.LinkedList;
 import java.util.List;
 
 public interface ProductService {
@@ -69,7 +71,7 @@ public interface ProductService {
      * @param id
      * @return
      */
-    List<String> getPictureUrlList(BigInteger id);
+//    LinkedList<Picture> getPicturesById(BigInteger id);
 
     /**
      * 添加商品
@@ -84,4 +86,6 @@ public interface ProductService {
      * @throws OrderException
      */
     void updateProduct(ProductDTO productDTO) throws OrderException;
+
+    ProductDTO getProductByProduct_id(BigInteger product_id) throws OrderException;
 }

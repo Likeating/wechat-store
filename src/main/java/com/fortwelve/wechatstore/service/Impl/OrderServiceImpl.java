@@ -196,17 +196,20 @@ public class OrderServiceImpl implements OrderService {
 
         Sku sku;
         Product product;
+
         for(OrderDetail orderDetail : orderDetailList){
             sku = skuMapper.getSkuById(orderDetail.getSku_id());
+            //sku被删除了
+            if(null == sku)continue;
             product = productMapper.getProductById(orderDetail.getProduct_id());
-
+            if(null == product)continue;
             //恢复库存
             sku.setStock(sku.getStock()+orderDetail.getNum());
             //恢复销量
             product.setSale(product.getSale()-orderDetail.getNum());
-            if (skuMapper.updateSku(sku)==0 || productMapper.updateProduct(product)==0){
-                throw new OrderException("订单操作失败。",612);
-            }
+            skuMapper.updateSku(sku);
+            productMapper.updateProduct(product);
+
         }
     }
 

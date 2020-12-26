@@ -1,10 +1,12 @@
 package com.fortwelve.wechatstore.dto;
 
+import com.fortwelve.wechatstore.pojo.Picture;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+import javax.validation.constraints.NotNull;
 import java.math.BigInteger;
 
 @Data
@@ -12,7 +14,9 @@ import java.math.BigInteger;
 @AllArgsConstructor
 @ToString
 public class CategoryDTO {
-    private int category_id;
+    private Integer category_id;
+    @NotNull(message = "分类名不能为空。")
     private String category_name;
-    private BigInteger picture_id;
+    @NotNull(message = "图片不能为空。")
+    private Picture picture;
 }

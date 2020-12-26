@@ -1,15 +1,13 @@
 package com.fortwelve.wechatstore.service.Impl;
 
 import com.fortwelve.wechatstore.dao.*;
-import com.fortwelve.wechatstore.dto.ProductDTO;
-import com.fortwelve.wechatstore.dto.ProductDetailDTO;
-import com.fortwelve.wechatstore.dto.ProductPropertiesDTO;
-import com.fortwelve.wechatstore.dto.SkuPropertiesDTO;
+import com.fortwelve.wechatstore.dto.*;
 import com.fortwelve.wechatstore.pojo.*;
 import com.fortwelve.wechatstore.service.ProductService;
 import com.fortwelve.wechatstore.service.PropertyService;
 import com.fortwelve.wechatstore.util.OrderException;
 import com.fortwelve.wechatstore.util.ProductUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
@@ -19,7 +17,7 @@ import java.math.BigInteger;
 import java.sql.Timestamp;
 import java.util.*;
 
-
+@Slf4j
 @Transactional(isolation = Isolation.REPEATABLE_READ,rollbackFor = Exception.class)
 @Service
 public class ProductServiceImpl implements ProductService {
@@ -141,16 +139,25 @@ public class ProductServiceImpl implements ProductService {
         List<Product> products = productMapper.searchProductPage(keywords,cid,sort,offset,rows);
         return products;
     }
-    @Override
-    public List<String> getPictureUrlList(BigInteger id) {
+
+    /**
+     * 工具方法，根据图集id获取图片列表
+     * @param id
+     * @return
+     */
+    private LinkedList<Picture> getPicturesById(BigInteger id) {
         //获取图集
         PictureList pictureList = pictureListMapper.getPictureListById(id);
-        List<String> pictureUrlList = new LinkedList<>();
+        LinkedList<Picture> pictureUrlList = new LinkedList<>();
+        if(null == pictureList || null == pictureList.getPictures_id()){
+            return null;
+        }
         String [] pictureIdArray = pictureList.getPictures_id().split("_");
-        if (pictureIdArray.length>0){
-            for(String pid : pictureIdArray){
-                pictureUrlList.add(pictureMapper.getPictureById(new BigInteger(pid)).getUrl());
+        for(String pid : pictureIdArray){
+            if(pid.equals("")){
+                continue;
             }
+            pictureUrlList.add(pictureMapper.getPictureById(new BigInteger(pid)));
         }
         return pictureUrlList;
     }
@@ -188,148 +195,29 @@ public class ProductServiceImpl implements ProductService {
             }
             skuPropertiesDTOList.add(getSkuProperties(sku));
         }
+        LinkedList<Picture> preview_list = getPicturesById(product.getPreview_id());
+        LinkedList<String> preview = new LinkedList<>();
+        for(Picture tmp : preview_list){
+            preview.add(tmp.getUrl());
+        }
+        LinkedList<Picture> detail_list = getPicturesById(product.getDetail_id());
+        LinkedList<String> details = new LinkedList<>();
+        for(Picture tmp : detail_list){
+            details.add(tmp.getUrl());
+        }
         return new ProductDetailDTO(
                 getProductProperties(product),
                 keys,
                 values,
                 skuPropertiesDTOList,
-                getPictureUrlList(product.getPreview_id()),
-                getPictureUrlList(product.getDetail_id())
+                preview,
+                details
         );
     }
 
     @Override
     public void addProduct(ProductDTO productDTO) throws OrderException {
-
         changeProduct(productDTO,false);
-//        try{
-//
-//            //获取主图、轮播图、详情图
-//            Picture picture_main = productDTO.getPicture_main();
-//            LinkedList<Picture> picture_preview = productDTO.getPicture_preview();
-//            LinkedList<Picture> picture_detail = productDTO.getPicture_detail();
-//            String preview = null;
-//            String detail = null;
-//
-//            //设置轮播图
-//            for(Picture tmp : picture_preview){
-//                if(null == pictureMapper.getPictureById(tmp.getPicture_id())){
-//                    throw new OrderException("商品添加失败：轮播图设置错误。",631);
-//                }
-//                if(null == preview){
-//                    preview = String.valueOf(tmp.getPicture_id());
-//                }else {
-//                    preview = preview +"_"+String.valueOf(tmp.getPicture_id());
-//                }
-//            }
-//            PictureList pictureList_preview = new PictureList();
-//            pictureList_preview.setPictures_id(preview);
-//
-//            if(0 == pictureListMapper.addPictureList(pictureList_preview)){
-//                throw new OrderException("商品添加失败：轮播图保存失败。",631);
-//            }
-//            //设置详情图
-//            for(Picture tmp : picture_detail){
-//                if(null == pictureMapper.getPictureById(tmp.getPicture_id())){
-//                    throw new OrderException("商品添加失败：详情图设置错误。",631);
-//                }
-//                if(null == detail){
-//                    detail = String.valueOf(tmp.getPicture_id());
-//                }else {
-//                    detail = detail +"_"+String.valueOf(tmp.getPicture_id());
-//                }
-//            }
-//            PictureList pictureList_detail = new PictureList();
-//            pictureList_detail.setPictures_id(detail);
-//            if(0 == pictureListMapper.addPictureList(pictureList_detail)){
-//                throw new OrderException("商品添加失败：详情图保存失败。",631);
-//            }
-//            Product product = ProductUtils.getProductByProductDTO(productDTO);
-//            //设置主图、轮播图、详情图
-//            product.setPicture_id(picture_main.getPicture_id());
-//            product.setPreview_id(pictureList_preview.getId());
-//            product.setDetail_id(pictureList_detail.getId());
-//            //设置上架时间
-////            product.setAdd_time(new Timestamp(System.currentTimeMillis()));
-////            product.setAdd_time(productDTO.getAdd_time());
-//            //保存商品
-//            if(0 == productMapper.addProduct(product)){
-//                throw new OrderException("商品添加失败：主信息保存失败。",631);
-//            }
-//
-//            //保存key和value
-//            HashMap<String,String> keyMap = productDTO.getKeys();
-//            HashMap<String,String> valueMap = productDTO.getValues();
-//
-//            HashMap<String,String> keyId =  new HashMap<>();
-//            HashMap<String,String> valueId = new HashMap<>();
-//            HashMap<String,String> keyMap_new =  new HashMap<>();
-//            HashMap<String,String> valueMap_new = new HashMap<>();
-//
-//            //把key保存到数据库
-//            Iterator<Map.Entry<String,String>> iterator = keyMap.entrySet().iterator();
-//            Map.Entry<String,String> entry;
-//            while(iterator.hasNext()){
-//                entry = iterator.next();
-//                PropertyKey propertyKey = new PropertyKey();
-//                propertyKey.setProduct_id(product.getProduct_id());
-//                propertyKey.setKey_name(entry.getValue());
-//                if(0 == propertyService.addPropertyKey(propertyKey)){
-//                    throw new OrderException("商品添加失败：key保存失败。",631);
-//                }
-//                keyId.put(entry.getKey(),String.valueOf(propertyKey.getKey_id()));
-//                keyMap_new.put(String.valueOf(propertyKey.getKey_id()),entry.getValue());
-//            }
-//            productDTO.setKeys(keyMap_new);
-//            //把value保存到数据库
-//            iterator = valueMap.entrySet().iterator();
-//            while(iterator.hasNext()){
-//                entry = iterator.next();
-//                PropertyValue propertyValue = new PropertyValue();
-//                propertyValue.setProduct_id(product.getProduct_id());
-//                propertyValue.setValue_name(entry.getValue());
-//                if(0 == propertyService.addPropertyValue(propertyValue)){
-//                    throw new OrderException("商品添加失败：value保存失败。",631);
-//                }
-//                valueId.put(entry.getKey(),String.valueOf(propertyValue.getValue_id()));
-//                valueMap_new.put(String.valueOf(propertyValue.getValue_id()),entry.getValue());
-//            }
-//            productDTO.setValues(valueMap_new);
-//
-//
-//            //保存sku
-//            List<Sku> skuList = productDTO.getSku_list();
-//            for(Sku sku : skuList){
-//                sku.setProduct_id(product.getProduct_id());
-//
-//                //把sku属性值替换成实际的keyId_valueId值
-//                String properties = sku.getProperties();
-//                String properties_new = null;
-//                String [] kvs = properties.split("_");
-//                for(String tmp : kvs){
-//                    String kv [] = tmp.split(":");
-//                    String kid = keyId.get(kv[0]);
-//                    String vid = valueId.get(kv[1]);
-//                    if(null == kid || null == vid){
-//                        throw new OrderException("商品添加失败：sku属性不正确。",631);
-//                    }
-//                    if(null == properties_new){
-//                        properties_new = kid+":"+vid;
-//                    }else{
-//                        properties_new = properties_new+"_"+kid+":"+vid;
-//                    }
-//                }
-//                sku.setProperties(properties_new);
-//                if(skuMapper.addSku(sku)==0){
-//                    throw new OrderException("商品添加失败：sku保存失败。",631);
-//                }
-//            }
-//            productDTO.setProduct_id(product.getProduct_id());
-//        }catch (OrderException e){
-//            throw e;
-//        }catch (Exception e){
-//            throw new OrderException("商品添加失败。",631);
-//        }
 
     }
 
@@ -338,25 +226,44 @@ public class ProductServiceImpl implements ProductService {
     public void updateProduct(ProductDTO productDTO) throws OrderException {
         changeProduct(productDTO,true);
     }
+
+    /**
+     * 增加或修改商品
+     * @param productDTO
+     * @param update 更新，true表示修改，false表示添加
+     * @throws OrderException
+     */
     public void changeProduct(ProductDTO productDTO,boolean update) throws OrderException {
         try{
-
+            Product product = ProductUtils.getProductByProductDTO(productDTO);
+            Product product_old = null;
             if(update){
-                Product product_old = productMapper.getProductById(productDTO.getProduct_id());
+                product_old = productMapper.getProductById(productDTO.getProduct_id());
                 if(null == product_old){
                     throw new OrderException("商品保存出错：原商品不存在。",631);
                 }
-                //删除原先的图片集
-                if(null != product_old.getPreview_id()){
-                    if(0 == pictureListMapper.deletePictureListById(product_old.getPreview_id())){
-                        throw new OrderException("商品保存出错：轮播图设置失败。",631);
+                //删除不需要的sku
+                List<Sku> skuList_old = skuMapper.getSkuByProductId(product_old.getProduct_id());
+                boolean isExist;
+                for(Sku tmp_old:skuList_old){
+                    if(tmp_old.getSku_id() == null){
+                        continue;
+                    }
+                    isExist = false;
+                    List<SkuDTO> skuList_new = productDTO.getSku_list();
+                    for(SkuDTO tmp_new : skuList_new){
+                        if(tmp_new.getSku_id().equals(tmp_old.getSku_id())){
+                           isExist = true;
+                        }
+                    }
+                    if(!isExist){
+                        //这里就一定要抛出异常，不然可能会导致获取商品时获取到旧的sku。
+                        if(0 == skuMapper.deleteSkuById(tmp_old.getSku_id())){
+                            throw new OrderException("商品保存出错：sku修改失败。",631);
+                        }
                     }
                 }
-                if(null != product_old.getDetail_id()){
-                    if(0 == pictureListMapper.deletePictureListById(product_old.getDetail_id())){
-                        throw new OrderException("商品保存出错：详情图设置失败。",631);
-                    }
-                }
+
                 //删除原有的key
                 List<PropertyKey> propertyKeyList = propertyKeyMapper.getAllPropertyKeyByProduct_id(product_old.getProduct_id());
                 for(PropertyKey tmp : propertyKeyList){
@@ -371,7 +278,9 @@ public class ProductServiceImpl implements ProductService {
                         throw new OrderException("商品保存出错：key设置失败。",631);
                     }
                 }
-
+                //设置销量
+                product.setSale(product_old.getSale());
+                productDTO.setSale(product_old.getSale());
             }
 
             //获取主图、轮播图、详情图
@@ -414,7 +323,7 @@ public class ProductServiceImpl implements ProductService {
             if(0 == pictureListMapper.addPictureList(pictureList_detail)){
                 throw new OrderException("商品保存出错：详情图保存失败。",631);
             }
-            Product product = ProductUtils.getProductByProductDTO(productDTO);
+
             //设置主图、轮播图、详情图
             product.setPicture_id(picture_main.getPicture_id());
             product.setPreview_id(pictureList_preview.getId());
@@ -425,7 +334,23 @@ public class ProductServiceImpl implements ProductService {
                 if(0 == productMapper.updateProduct(product)){
                     throw new OrderException("商品保存出错：主信息修改失败。",631);
                 }
+                //删除原先的图片集
+
+                if(null != product_old.getPreview_id()){
+                    if(0 == pictureListMapper.deletePictureListById(product_old.getPreview_id())){
+                        throw new OrderException("商品保存出错：轮播图设置失败。",631);
+//                        log.info("商品保存出错：旧轮播图删除出错。");
+                    }
+                }
+                if(null != product_old.getDetail_id()){
+                    if(0 == pictureListMapper.deletePictureListById(product_old.getDetail_id())){
+                        throw new OrderException("商品保存出错：详情图设置失败。",631);
+//                        log.info("商品保存出错：旧详情图删除出错。");
+                    }
+                }
+
             }else {
+                product.setSale(0);
                 if(0 == productMapper.addProduct(product)){
                     throw new OrderException("商品保存出错：主信息保存失败。",631);
                 }
@@ -472,12 +397,16 @@ public class ProductServiceImpl implements ProductService {
 
 
             //保存sku
-            List<Sku> skuList = productDTO.getSku_list();
-            for(Sku sku : skuList){
+            List<SkuDTO> skuDTOList = productDTO.getSku_list();
+            for(SkuDTO skuDTO : skuDTOList){
+                Sku sku = new Sku();
+                sku.setSku_id(skuDTO.getSku_id());
                 sku.setProduct_id(product.getProduct_id());
 
+
+
                 //把sku属性值替换成实际的keyId_valueId值
-                String properties = sku.getProperties();
+                String properties = skuDTO.getProperties();
                 String properties_new = null;
                 String [] kvs = properties.split("_");
                 for(String tmp : kvs){
@@ -494,9 +423,20 @@ public class ProductServiceImpl implements ProductService {
                     }
                 }
                 sku.setProperties(properties_new);
+
+                sku.setSku_price(skuDTO.getSku_price());
+                sku.setStock(skuDTO.getStock());
+//                if(){
+//
+//                }
+                sku.setPicture_id(skuDTO.getPicture().getPicture_id());
+
                 if(update && null != sku.getSku_id()){
                     Sku sku_old = skuMapper.getSkuById(sku.getSku_id());
-                    if(null == sku_old || product.getProduct_id() != sku_old.getProduct_id()){
+                    if(null == sku_old || !product.getProduct_id().equals(sku_old.getProduct_id()) ){
+                        System.out.println(sku_old);
+                        System.out.println(product.getProduct_id());
+                        System.out.println(sku_old.getProduct_id());
                         throw new OrderException("商品保存出错：sku属性不正确。",631);
                     }
                     if(0 == skuMapper.updateSku(sku)){
@@ -513,7 +453,75 @@ public class ProductServiceImpl implements ProductService {
         }catch (OrderException e){
             throw e;
         }catch (Exception e){
+            e.printStackTrace();
             throw new OrderException("商品保存出错。",631);
         }
+    }
+
+    @Override
+    public ProductDTO getProductByProduct_id(BigInteger product_id) throws OrderException {
+        ProductDTO productDTO = null ;
+        try{
+            Product product = productMapper.getProductById(product_id);
+            if(null == product){
+                throw new OrderException("商品不存在。",608);
+            }
+            productDTO = ProductUtils.getProductDTOByProduct(product);
+            productDTO.setPicture_main(pictureMapper.getPictureById(product.getPicture_id()));
+            productDTO.setPicture_preview(getPicturesById(product.getPreview_id()));
+            productDTO.setPicture_detail(getPicturesById(product.getDetail_id()));
+            List<Sku> skuList = skuMapper.getSkuByProductId(product_id);
+            List<SkuDTO> skuDTOList = new LinkedList<>();
+
+            HashMap<String,String> keys = new HashMap<>();
+            HashMap<String,String> values = new HashMap<>();
+            Iterator<Sku> iterator = skuList.iterator();
+
+            while (iterator.hasNext()){
+                Sku sku = iterator.next();
+                String [] properties=sku.getProperties().split("_");
+                for(String property:properties){
+                    String [] kv = property.split(":");
+                    if(keys.get(kv[0])==null){
+                        PropertyKey propertyKey = propertyService.getPropertyKeyById(new BigInteger(kv[0]));
+                        if(propertyKey == null){
+                            throw new OrderException("商品获取失败：sku属性名不正确。",632);
+//                            iterator.remove();
+//                            break;
+                        }
+                        keys.put(kv[0],propertyKey.getKey_name());
+                    }
+                    if(values.get(kv[1])==null){
+                        PropertyValue propertyValue = propertyService.getPropertyValueById(new BigInteger(kv[1]));
+                        if(propertyValue == null){
+                            throw new OrderException("商品获取失败：sku属性值不正确。",632);
+//                            iterator.remove();
+//                            break;
+                        }
+                        values.put(kv[1],propertyValue.getValue_name());
+                    }
+                }
+                SkuDTO skuDTO = new SkuDTO();
+                skuDTO.setSku_id(sku.getSku_id());
+                skuDTO.setProduct_id(sku.getProduct_id());
+                skuDTO.setProperties(sku.getProperties());
+                skuDTO.setSku_price(sku.getSku_price());
+                skuDTO.setStock(sku.getStock());
+                skuDTO.setPicture(pictureMapper.getPictureById(sku.getPicture_id()));
+
+                skuDTOList.add(skuDTO);
+            }
+            productDTO.setKeys(keys);
+            productDTO.setValues(values);
+            productDTO.setSku_list(skuDTOList);
+
+        }catch (OrderException e){
+            throw e;
+        }catch (Exception e){
+            e.printStackTrace();
+            throw new OrderException("商品获取失败。",632);
+        }
+
+        return productDTO;
     }
 }
