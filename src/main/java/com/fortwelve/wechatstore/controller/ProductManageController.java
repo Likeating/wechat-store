@@ -29,7 +29,7 @@ import java.util.*;
 
 @Slf4j
 @RestController
-@RequestMapping("/product")
+@RequestMapping("/productManage")
 public class ProductManageController {
 
     @Autowired

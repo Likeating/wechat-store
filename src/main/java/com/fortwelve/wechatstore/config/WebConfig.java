@@ -50,9 +50,10 @@ public class WebConfig implements WebMvcConfigurer {
                     .excludePathPatterns("/manager/login")
                 .addPathPatterns("/category/**")
                     .excludePathPatterns("/category/getCategory")
-                .addPathPatterns("/product/**")
-                .addPathPatterns("/customer/**")
-                .addPathPatterns("/statistic/**");
+                .addPathPatterns("/productManage/**")
+                .addPathPatterns("/customerManage/**")
+                .addPathPatterns("/statistic/**")
+                .addPathPatterns("/orderManage/**");
 
 
     }

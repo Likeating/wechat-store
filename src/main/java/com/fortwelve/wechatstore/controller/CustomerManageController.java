@@ -33,7 +33,7 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 //@CrossOrigin
 @RestController
-@RequestMapping("/customer")
+@RequestMapping("/customerManage")
 public class CustomerManageController {
 
     @Value("${JWTUtils.manager.signature}")

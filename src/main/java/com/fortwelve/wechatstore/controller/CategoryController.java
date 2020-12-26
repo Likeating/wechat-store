@@ -104,7 +104,10 @@ public class CategoryController {
             category.setCategory_id(categoryDTO.getCategory_id());
             category.setCategory_name(categoryDTO.getCategory_name());
             category.setPicture_id(categoryDTO.getPicture().getPicture_id());
-
+            if(null == categoryService.getCategoryById(category.getCategory_id())){
+                msg.setMeta("修改商品分类失败：原商品分类不存在。",642);
+                return msg;
+            }
             if(categoryService.updateCategory(category)==0){
                 msg.setMeta("修改商品分类失败。",642);
                 return msg;
