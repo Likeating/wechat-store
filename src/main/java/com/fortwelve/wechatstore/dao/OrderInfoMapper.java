@@ -44,7 +44,7 @@ public interface OrderInfoMapper {
             "</if>"+
             "<if test='rows!=null'> limit <if test='offset!=null'>#{offset},</if>#{rows}</if>"+
             "</script>")
-    public List<OrderInfo> getAllOrderInfo(BigInteger customer_id,Integer order_status,Integer sort,Integer offset, Integer rows);
+    public List<OrderInfo> getAllOrderInfo(@Param("customer_id")BigInteger customer_id,@Param("order_status") Integer order_status,@Param("sort") Integer sort,@Param("offset") Integer offset,@Param("rows") Integer rows);
 
 
 
