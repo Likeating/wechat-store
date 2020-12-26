@@ -46,4 +46,6 @@ public interface OrderInfoMapper {
             "</script>")
     public List<OrderInfo> getAllOrderInfo(BigInteger customer_id,Integer order_status,Integer sort,Integer offset, Integer rows);
 
+
+
 }
