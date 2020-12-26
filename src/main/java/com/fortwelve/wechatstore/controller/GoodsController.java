@@ -39,7 +39,7 @@ public class GoodsController {
                 if(pagenum < 1){
                     pagenum = 1;
                 }
-                start = (pagenum - 1)*5;
+                start = (pagenum - 1)*pagesize;
             }else {
                 pagenum = 1;
             }

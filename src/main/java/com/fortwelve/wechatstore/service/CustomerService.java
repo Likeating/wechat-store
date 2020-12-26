@@ -23,4 +23,6 @@ public interface CustomerService {
     UserInfoDTO CustomerToUserInfo(Customer customer);
 
     Customer UserInfoToCustomer(UserInfoDTO userInfoDTO, String openid);
+
+    List<Customer> searchCustomer(List<String> keywords,BigInteger customer_id,Integer offset,Integer rows);
 }

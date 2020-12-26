@@ -82,4 +82,9 @@ public class CustomerServiceImpl implements CustomerService {
                 userInfoDTO.getCreate_time()
         );
     }
+
+    @Override
+    public List<Customer> searchCustomer(List<String> keywords, BigInteger customer_id, Integer offset, Integer rows) {
+        return customerMapper.searchCustomer(keywords,customer_id,offset,rows);
+    }
 }

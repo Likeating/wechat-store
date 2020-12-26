@@ -28,5 +28,18 @@ public interface CustomerMapper {
     @Update("update customer set nickName=#{nickName},gender=#{gender},wxlanguage=#{language},city=#{city},province=#{province},country=#{country},avatarUrl=#{avatarUrl} where customer_id=#{customer_id}")
     public int updateCustomer(Customer customer);
 
-
+    @Select("<script>"+
+            "select * from customer "+
+            "<where>"+
+                "<if test='keywords!=null'>"+
+                    "<foreach item='keyword' collection='keywords' separator=' and '>"+
+                    "nickName like concat('%',#{keyword},'%')"+
+                    "</foreach>"+
+                "</if>"+
+                "<if test='customer_id!=null'> and customer_id=#{customer_id}</if>"+
+            "</where>"+
+            "<if test='rows!=null'> limit <if test='offset!=null'>#{offset},</if>#{rows}</if>"+
+            "</script>"
+    )
+    public List<Customer> searchCustomer(List<String> keywords,BigInteger customer_id,Integer offset,Integer rows);
 }

@@ -46,28 +46,28 @@ public class ProductManageController {
     private int managerMinute;
 
     @GetMapping("/search")
-    public Object search(String query, Integer cid, Integer sort,Integer pagenum,Integer pagesize){
+    public Object search(String keys, Integer cid, Integer sort,Integer currentPage,Integer pageSize){
         MsgMap msg = new MsgMap();
 
         try{
 
             String str =null;
             List<String> keywords=null;
-            if(query!=null && ! (str = query.trim()).equals("")){//有关键字
+            if(keys!=null && ! (str = keys.trim()).equals("")){//有关键字
                 System.out.println(str);
                 keywords = Arrays.asList(str.split("\\s+"));
             }
             Integer start = null;
-            if(null != pagenum){
-                if(pagenum < 1){
-                    pagenum = 1;
+            if(null != currentPage){
+                if(currentPage < 1){
+                    currentPage = 1;
                 }
-                start = (pagenum - 1)*5;
-            }else {
-                pagenum = 1;
+                start = (currentPage - 1)*pageSize;
+            }else{
+                currentPage = 1;
             }
 
-            List<Product> productList = productService.searchProductPage(keywords,cid,sort,start,pagesize);
+            List<Product> productList = productService.searchProductPage(keywords,cid,sort,start,pageSize);
             List<ProductDTO> productDTOList = new LinkedList<>();
             ProductDTO productDTO;
             for (Product tmp : productList){
@@ -79,7 +79,7 @@ public class ProductManageController {
             }
             int totalNum = productService.searchProductPage(keywords,cid,sort,null,null).size();
             msg.setMeta("获取成功。",200);
-            msg.put("pagenum",pagenum);
+            msg.put("currentPage",currentPage);
             msg.put("total",totalNum);
             msg.put("productList",productDTOList);
         }catch (Exception e){
