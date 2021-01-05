@@ -1,0 +1,23 @@
+JWTUtils:
+  wx:
+    signature: "wxSignature"
+    minute: 10080
+  manager:
+    signature: "managerSignature"
+    minute: 10080
+
+OrderCheck:
+  unpaid: #未支付订单检查
+    TTL: 1800 #存活时间，单位：秒
+    interval: 60000 #检查间隔 单位：毫秒
+
+WXApi:
+  appid: "wx7ba9c5031955766f"
+  secret: "283c6c34a2344d044e4b8229cc1bda2d"
+
+Picture:
+  pattern: "/img/**"
+  path: "/data/img/"
+
+Manager:
+  codeTTL: 120 #code码的存活时间，单位：秒

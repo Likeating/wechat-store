@@ -1,101 +1,67 @@
 package com.fortwelve.wechatstore;
 
-import com.fortwelve.wechatstore.mapper.CategoryMapper;
-import com.fortwelve.wechatstore.mapper.CustomerMapper;
-import com.fortwelve.wechatstore.mapper.PictureMapper;
-import com.fortwelve.wechatstore.pojo.Category;
-import com.fortwelve.wechatstore.pojo.Customer;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fortwelve.wechatstore.component.MsgMap;
+import com.fortwelve.wechatstore.dao.StatisticMapper;
+import com.fortwelve.wechatstore.dto.ProductDTO;
+import com.fortwelve.wechatstore.dto.ProductPropertiesDTO;
+import com.fortwelve.wechatstore.pojo.OrderDetail;
 import com.fortwelve.wechatstore.pojo.Picture;
+import com.fortwelve.wechatstore.pojo.PictureList;
+import com.fortwelve.wechatstore.pojo.Product;
+import com.fortwelve.wechatstore.service.OrderService;
+import com.fortwelve.wechatstore.service.ProductService;
+import com.fortwelve.wechatstore.component.OrderCheckerThread;
+import com.fortwelve.wechatstore.util.ProductUtils;
+import com.fortwelve.wechatstore.util.WXapi;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.util.DigestUtils;
 
-import javax.sql.DataSource;
+import java.io.IOException;
 import java.math.BigInteger;
-import java.sql.Connection;
-import java.sql.SQLException;
+import java.security.NoSuchAlgorithmException;
+import java.sql.Timestamp;
+import java.util.Calendar;
+import java.util.LinkedList;
+import java.util.List;
 
 @SpringBootTest
+@Slf4j
 class WechatStoreApplicationTests {
 
-    @Autowired
-    DataSource dataSource;
-    @Autowired
-    CustomerMapper customerMapper;
-    @Autowired
-    CategoryMapper categoryMapper;
-    @Autowired
-    PictureMapper pictureMapper;
 
 
+    @Autowired
+    ProductService productService;
+    @Autowired
+    private WXapi wxapi;
+    @Autowired
+    OrderService orderService;
+    @Autowired
+    ObjectMapper objectMapper;
+    @Autowired
+    StringRedisTemplate stringRedisTemplate;
+
+    @Autowired
+    RedisTemplate<String,String> redisTemplate;
+    @Autowired
+    MsgMap msgMap;
+    @Autowired
+    OrderCheckerThread orderCheckerThread;
+    @Autowired
+    StatisticMapper statisticMapper;
     @Test
-    void contextLoads() throws SQLException {
-        Connection cn = dataSource.getConnection();
-        System.out.println(cn);
-        cn.close();
-    }
-
-    @Test
-    void testMapper(){
-        System.out.println(customerMapper.getCustomerById(new java.math.BigInteger("1")));
-        System.out.println(customerMapper.getAllCustomer());
-
-        System.out.println(categoryMapper.getCategoryById(2));
-
-        Category category = new Category();
-        category.setCategory_name("分类名");
-//        System.out.println(categoryMapper.addCategory(category));
-//        System.out.println(categoryMapper.getAllCategory());
-//        Category category2 = new Category();
-//        category2.setCategory_id(8);
-//        category2.setCategory_name("修改后的分类名");
-//        System.out.println(categoryMapper.updateCategory(category2));
-//        System.out.println(categoryMapper.deleteCategory(7));
-    }
-
-    @Test
-    void testCustomerMapper(){
-        System.out.println("添加志杰");
-        Customer customer1 = new Customer();
-        customer1.setCustomer_name("陈志杰");
-        customerMapper.addCustomer(customer1);
-        System.out.println(customer1.getCustomer_id());
-//        System.out.println("获取梓鹏");
-//
-//        Customer customer2=customerMapper.getCustomerById(new java.math.BigInteger("1"));
-//        System.out.println(customer2);
-//        customer2.setCustomer_name("邓梓鹏");
-//
-//        System.out.println("修改梓鹏为邓梓鹏");
-//
-//        System.out.println(customerMapper.updateCustomer(customer2));
-//
-//        System.out.println("添加错误名字");
-//        Customer customer3 = new Customer(new java.math.BigInteger("3"),"dingyunyu");
-//        customerMapper.addCustomer(customer3);
-//        System.out.println(customerMapper.getAllCustomer());
-//        System.out.println("插入后的主键");
-//        System.out.println(customer3.getCustomer_id());
-//        System.out.println("删除错误名字");
-//        System.out.println(customerMapper.deleteCustomerById(new BigInteger("3")));
+    void test01() throws JsonProcessingException {
+        System.out.println(statisticMapper.getTurnover(null, null, Timestamp.valueOf("2020-12-26 16:35:06")));
+        System.out.println(statisticMapper.getTurnover(null, Timestamp.valueOf("2020-12-26 16:35:06"),null));
+        System.out.println(statisticMapper.getTurnover(null,  Timestamp.valueOf("2020-12-26 16:35:06"),Timestamp.valueOf("2020-12-26 16:37:10")));
 
     }
 
-    @Test
-    void testPictureMapper(){
-        Picture picture1 = new Picture();
-        picture1.setUrl("picture1.jpg");
-        pictureMapper.addPicture(picture1);
-
-        System.out.println("返回的picture_id："+picture1.getPicture_id());
-        Picture picture2 = new Picture(new java.math.BigInteger("1"),"url3.jpg");
-        pictureMapper.addPicture(picture2);
-        System.out.println("返回的picture_id："+picture2.getPicture_id());
-        System.out.println(pictureMapper.getAllPicture());
-        System.out.println(pictureMapper.getPictureById(picture2.getPicture_id()));
-        picture2.setUrl("url2.jpg");
-        pictureMapper.updatePicture(picture2);
-        System.out.println(pictureMapper.deletePictureById(picture1.getPicture_id()));
-        System.out.println(pictureMapper.getAllPicture());
-    }
 }

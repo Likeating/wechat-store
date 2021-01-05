@@ -1,0 +1,18 @@
+{
+  "errMsg": "getUserInfo:ok",
+  "rawData": "{\"nickName\":\"Jason\",\"gender\":1,\"language\":\"zh_CN\",\"city\":\"\",\"province\":\"Van\",\"country\":\"Turkey\",\"avatarUrl\":\"https://thirdwx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTKolFX0XdToWC96ehuMmVL3MC5Tic4iaDFicJCHF9Q47uw60ibwUHppkuF45nbKhS7kAfeUp1xEVtp4KA/132\"}",
+  "signature": "10d191b3af6d68123ed62d5f1bf36918239b1e3d",
+  "encryptedData": "EK76c0hSO+aYFODUUPDUDdpZyfjmkiG70L+wjqzwZRW5dgZ7WlK18HAtuZ3kar8/laaDsrwh+e5r3rI4x4Axi/ybZaL39aY30q/LlF+hAkGWLe95UwN2UvjtSJy2S550lpzrWb15k5vYdJAMmiFbeSs82DWpfG6DzaOHRkKqnVtKWN47TbDq+1X3SV/VP0D/bAmSfugIqfr0RjiRSX8CArIPVl0Nkoga6AftTSgvl6Y/z+F9qafPzykCGPUHhwfY1ocvtLCauTFHG7Sri2jyl2BRxGsMG4cC/bHk+HLXgzHv9R+R2c2JV5g3B6/YkRVZS+DYO2uMWedI8G+ZCvYrCPobZwWDiTI0ikpKonGdYm8CvtofEJF/ktLnX7qfoRdKr8hwUZMRiAYVVsJt3W67tqUrFNyZuSOjaq/7gjBesd3DBxcFV6vnEs8KO/JgnTuAJ3ug6g93vz42ywq11ZPpQA==",
+  "iv": "8Q+Wo3mebvfP17e0DjSqyg==",
+  "userInfo": {
+    "nickName": "Jason",
+    "gender": 1,
+    "language": "zh_CN",
+    "city": "",
+    "province": "Van",
+    "country": "Turkey",
+    "avatarUrl": "https://thirdwx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTKolFX0XdToWC96ehuMmVL3MC5Tic4iaDFicJCHF9Q47uw60ibwUHppkuF45nbKhS7kAfeUp1xEVtp4KA/132"
+  }
+}
+
+//Code2SessionDTO(openid=oUhCD4sItcSXf24odsTHY9tllcNQ, session_key=a9xluJbwVSx6EjuxZEbTqw==, unionid=null, errcode=0, errmsg=null)

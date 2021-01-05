@@ -5,14 +5,17 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+import java.math.BigInteger;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
 public class PropertyValue {
 
-  private java.math.BigInteger value_id;
+  private BigInteger value_id;
+  private BigInteger product_id;
   private String value_name;
-  private java.math.BigInteger picture_id;
+  private BigInteger picture_id;
 
 }
