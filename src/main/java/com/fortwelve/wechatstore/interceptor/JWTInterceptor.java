@@ -52,6 +52,7 @@ public class JWTInterceptor implements HandlerInterceptor {
 
         try {
             if(null != token && !token.equals("")){
+                //Java Web Token 验证
                 JWTUtils.verify(token,signature);
                 return true;
             }
@@ -72,9 +73,7 @@ public class JWTInterceptor implements HandlerInterceptor {
         }catch (Exception e){
             meta.put("msg","未知错误！");
             meta.put("status",500);
-//            e.printStackTrace();
         }
-//        return true;//暂时改为true
         map.put("meta",meta);
         ObjectMapper objectMapper = new ObjectMapper();
         response.setContentType("application/json;charset=utf-8");

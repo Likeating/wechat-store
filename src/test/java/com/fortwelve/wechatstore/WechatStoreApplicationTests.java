@@ -18,6 +18,8 @@ import com.fortwelve.wechatstore.util.WXapi;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -56,11 +58,9 @@ class WechatStoreApplicationTests {
     OrderCheckerThread orderCheckerThread;
     @Autowired
     StatisticMapper statisticMapper;
+
     @Test
-    void test01() throws JsonProcessingException {
-        System.out.println(statisticMapper.getTurnover(null, null, Timestamp.valueOf("2020-12-26 16:35:06")));
-        System.out.println(statisticMapper.getTurnover(null, Timestamp.valueOf("2020-12-26 16:35:06"),null));
-        System.out.println(statisticMapper.getTurnover(null,  Timestamp.valueOf("2020-12-26 16:35:06"),Timestamp.valueOf("2020-12-26 16:37:10")));
+    void test01(@Qualifier("stringRedisTemplate")StringRedisTemplate ss, @Value("${Picture.pattern}") String s2) throws JsonProcessingException {
 
     }
 

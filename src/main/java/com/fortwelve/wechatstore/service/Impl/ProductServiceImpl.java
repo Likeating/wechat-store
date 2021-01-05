@@ -5,7 +5,7 @@ import com.fortwelve.wechatstore.dto.*;
 import com.fortwelve.wechatstore.pojo.*;
 import com.fortwelve.wechatstore.service.ProductService;
 import com.fortwelve.wechatstore.service.PropertyService;
-import com.fortwelve.wechatstore.util.OrderException;
+import com.fortwelve.wechatstore.component.MyException;
 import com.fortwelve.wechatstore.util.ProductUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +14,6 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigInteger;
-import java.sql.Timestamp;
 import java.util.*;
 
 @Slf4j
@@ -162,16 +161,16 @@ public class ProductServiceImpl implements ProductService {
         return pictureUrlList;
     }
     @Override
-    public ProductDetailDTO getProductDetail(BigInteger product_id) throws OrderException {
+    public ProductDetailDTO getProductDetail(BigInteger product_id) throws MyException {
         ProductDetailDTO productDetailDTO = new ProductDetailDTO();
         Product product = productMapper.getProductById(product_id);
         //商品不存在
         if (product==null){
-            throw new OrderException("商品不存在。",608);
+            throw new MyException("商品不存在。",608);
         }
         //商品下架
         if(product.getDelete_time()!=null && System.currentTimeMillis()<product.getDelete_time().getTime()){
-            throw new OrderException("商品已下架。",607);
+            throw new MyException("商品已下架。",607);
         }
 
         //获取sku属性、key、value
@@ -216,14 +215,14 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public void addProduct(ProductDTO productDTO) throws OrderException {
+    public void addProduct(ProductDTO productDTO) throws MyException {
         changeProduct(productDTO,false);
 
     }
 
 
     @Override
-    public void updateProduct(ProductDTO productDTO) throws OrderException {
+    public void updateProduct(ProductDTO productDTO) throws MyException {
         changeProduct(productDTO,true);
     }
 
@@ -231,16 +230,16 @@ public class ProductServiceImpl implements ProductService {
      * 增加或修改商品
      * @param productDTO
      * @param update 更新，true表示修改，false表示添加
-     * @throws OrderException
+     * @throws MyException
      */
-    public void changeProduct(ProductDTO productDTO,boolean update) throws OrderException {
+    public void changeProduct(ProductDTO productDTO,boolean update) throws MyException {
         try{
             Product product = ProductUtils.getProductByProductDTO(productDTO);
             Product product_old = null;
             if(update){
                 product_old = productMapper.getProductById(productDTO.getProduct_id());
                 if(null == product_old){
-                    throw new OrderException("商品保存出错：原商品不存在。",631);
+                    throw new MyException("商品保存出错：原商品不存在。",631);
                 }
                 //删除不需要的sku
                 List<Sku> skuList_old = skuMapper.getSkuByProductId(product_old.getProduct_id());
@@ -252,14 +251,14 @@ public class ProductServiceImpl implements ProductService {
                     isExist = false;
                     List<SkuDTO> skuList_new = productDTO.getSku_list();
                     for(SkuDTO tmp_new : skuList_new){
-                        if(tmp_new.getSku_id().equals(tmp_old.getSku_id())){
+                        if(null != tmp_new.getSku_id() && tmp_new.getSku_id().equals(tmp_old.getSku_id())){
                            isExist = true;
                         }
                     }
                     if(!isExist){
                         //这里就一定要抛出异常，不然可能会导致获取商品时获取到旧的sku。
                         if(0 == skuMapper.deleteSkuById(tmp_old.getSku_id())){
-                            throw new OrderException("商品保存出错：sku修改失败。",631);
+                            throw new MyException("商品保存出错：sku修改失败。",631);
                         }
                     }
                 }
@@ -268,14 +267,14 @@ public class ProductServiceImpl implements ProductService {
                 List<PropertyKey> propertyKeyList = propertyKeyMapper.getAllPropertyKeyByProduct_id(product_old.getProduct_id());
                 for(PropertyKey tmp : propertyKeyList){
                     if(0 == propertyKeyMapper.deletePropertyKeyById(tmp.getKey_id())){
-                        throw new OrderException("商品保存出错：key设置失败。",631);
+                        throw new MyException("商品保存出错：key设置失败。",631);
                     }
                 }
                 //删除原有的value
                 List<PropertyValue> propertyValueList = propertyValueMapper.getAllPropertyValueByProduct_id(product_old.getProduct_id());
                 for(PropertyValue tmp : propertyValueList){
                     if(0 == propertyValueMapper.deletePropertyValueById(tmp.getValue_id())){
-                        throw new OrderException("商品保存出错：key设置失败。",631);
+                        throw new MyException("商品保存出错：key设置失败。",631);
                     }
                 }
                 //设置销量
@@ -293,7 +292,7 @@ public class ProductServiceImpl implements ProductService {
             //设置轮播图
             for(Picture tmp : picture_preview){
                 if(null == pictureMapper.getPictureById(tmp.getPicture_id())){
-                    throw new OrderException("商品保存出错：轮播图设置错误。",631);
+                    throw new MyException("商品保存出错：轮播图设置错误。",631);
                 }
                 if(null == preview){
                     preview = String.valueOf(tmp.getPicture_id());
@@ -305,12 +304,12 @@ public class ProductServiceImpl implements ProductService {
             pictureList_preview.setPictures_id(preview);
 
             if(0 == pictureListMapper.addPictureList(pictureList_preview)){
-                throw new OrderException("商品保存出错：轮播图保存失败。",631);
+                throw new MyException("商品保存出错：轮播图保存失败。",631);
             }
             //设置详情图
             for(Picture tmp : picture_detail){
                 if(null == pictureMapper.getPictureById(tmp.getPicture_id())){
-                    throw new OrderException("商品保存出错：详情图设置错误。",631);
+                    throw new MyException("商品保存出错：详情图设置错误。",631);
                 }
                 if(null == detail){
                     detail = String.valueOf(tmp.getPicture_id());
@@ -321,7 +320,7 @@ public class ProductServiceImpl implements ProductService {
             PictureList pictureList_detail = new PictureList();
             pictureList_detail.setPictures_id(detail);
             if(0 == pictureListMapper.addPictureList(pictureList_detail)){
-                throw new OrderException("商品保存出错：详情图保存失败。",631);
+                throw new MyException("商品保存出错：详情图保存失败。",631);
             }
 
             //设置主图、轮播图、详情图
@@ -332,19 +331,19 @@ public class ProductServiceImpl implements ProductService {
             //保存商品
             if(update){
                 if(0 == productMapper.updateProduct(product)){
-                    throw new OrderException("商品保存出错：主信息修改失败。",631);
+                    throw new MyException("商品保存出错：主信息修改失败。",631);
                 }
                 //删除原先的图片集
 
                 if(null != product_old.getPreview_id()){
                     if(0 == pictureListMapper.deletePictureListById(product_old.getPreview_id())){
-                        throw new OrderException("商品保存出错：轮播图设置失败。",631);
+                        throw new MyException("商品保存出错：轮播图设置失败。",631);
 //                        log.info("商品保存出错：旧轮播图删除出错。");
                     }
                 }
                 if(null != product_old.getDetail_id()){
                     if(0 == pictureListMapper.deletePictureListById(product_old.getDetail_id())){
-                        throw new OrderException("商品保存出错：详情图设置失败。",631);
+                        throw new MyException("商品保存出错：详情图设置失败。",631);
 //                        log.info("商品保存出错：旧详情图删除出错。");
                     }
                 }
@@ -352,7 +351,7 @@ public class ProductServiceImpl implements ProductService {
             }else {
                 product.setSale(0);
                 if(0 == productMapper.addProduct(product)){
-                    throw new OrderException("商品保存出错：主信息保存失败。",631);
+                    throw new MyException("商品保存出错：主信息保存失败。",631);
                 }
             }
 
@@ -374,7 +373,7 @@ public class ProductServiceImpl implements ProductService {
                 propertyKey.setProduct_id(product.getProduct_id());
                 propertyKey.setKey_name(entry.getValue());
                 if(0 == propertyService.addPropertyKey(propertyKey)){
-                    throw new OrderException("商品保存出错：key保存失败。",631);
+                    throw new MyException("商品保存出错：key保存失败。",631);
                 }
                 keyId.put(entry.getKey(),String.valueOf(propertyKey.getKey_id()));
                 keyMap_new.put(String.valueOf(propertyKey.getKey_id()),entry.getValue());
@@ -388,7 +387,7 @@ public class ProductServiceImpl implements ProductService {
                 propertyValue.setProduct_id(product.getProduct_id());
                 propertyValue.setValue_name(entry.getValue());
                 if(0 == propertyService.addPropertyValue(propertyValue)){
-                    throw new OrderException("商品保存出错：value保存失败。",631);
+                    throw new MyException("商品保存出错：value保存失败。",631);
                 }
                 valueId.put(entry.getKey(),String.valueOf(propertyValue.getValue_id()));
                 valueMap_new.put(String.valueOf(propertyValue.getValue_id()),entry.getValue());
@@ -414,7 +413,7 @@ public class ProductServiceImpl implements ProductService {
                     String kid = keyId.get(kv[0]);
                     String vid = valueId.get(kv[1]);
                     if(null == kid || null == vid){
-                        throw new OrderException("商品保存出错：sku属性不正确。",631);
+                        throw new MyException("商品保存出错：sku属性不正确。",631);
                     }
                     if(null == properties_new){
                         properties_new = kid+":"+vid;
@@ -437,34 +436,34 @@ public class ProductServiceImpl implements ProductService {
                         System.out.println(sku_old);
                         System.out.println(product.getProduct_id());
                         System.out.println(sku_old.getProduct_id());
-                        throw new OrderException("商品保存出错：sku属性不正确。",631);
+                        throw new MyException("商品保存出错：sku属性不正确。",631);
                     }
                     if(0 == skuMapper.updateSku(sku)){
-                        throw new OrderException("商品保存出错：sku修改失败。",631);
+                        throw new MyException("商品保存出错：sku修改失败。",631);
                     }
                 }else{
                     if(0 == skuMapper.addSku(sku)){
-                        throw new OrderException("商品保存出错：sku保存失败。",631);
+                        throw new MyException("商品保存出错：sku保存失败。",631);
                     }
                 }
 
             }
             productDTO.setProduct_id(product.getProduct_id());
-        }catch (OrderException e){
+        }catch (MyException e){
             throw e;
         }catch (Exception e){
             e.printStackTrace();
-            throw new OrderException("商品保存出错。",631);
+            throw new MyException("商品保存出错。",631);
         }
     }
 
     @Override
-    public ProductDTO getProductByProduct_id(BigInteger product_id) throws OrderException {
+    public ProductDTO getProductByProduct_id(BigInteger product_id) throws MyException {
         ProductDTO productDTO = null ;
         try{
             Product product = productMapper.getProductById(product_id);
             if(null == product){
-                throw new OrderException("商品不存在。",608);
+                throw new MyException("商品不存在。",608);
             }
             productDTO = ProductUtils.getProductDTOByProduct(product);
             productDTO.setPicture_main(pictureMapper.getPictureById(product.getPicture_id()));
@@ -485,7 +484,7 @@ public class ProductServiceImpl implements ProductService {
                     if(keys.get(kv[0])==null){
                         PropertyKey propertyKey = propertyService.getPropertyKeyById(new BigInteger(kv[0]));
                         if(propertyKey == null){
-                            throw new OrderException("商品获取失败：sku属性名不正确。",632);
+                            throw new MyException("商品获取失败：sku属性名不正确。",632);
 //                            iterator.remove();
 //                            break;
                         }
@@ -494,7 +493,7 @@ public class ProductServiceImpl implements ProductService {
                     if(values.get(kv[1])==null){
                         PropertyValue propertyValue = propertyService.getPropertyValueById(new BigInteger(kv[1]));
                         if(propertyValue == null){
-                            throw new OrderException("商品获取失败：sku属性值不正确。",632);
+                            throw new MyException("商品获取失败：sku属性值不正确。",632);
 //                            iterator.remove();
 //                            break;
                         }
@@ -515,11 +514,11 @@ public class ProductServiceImpl implements ProductService {
             productDTO.setValues(values);
             productDTO.setSku_list(skuDTOList);
 
-        }catch (OrderException e){
+        }catch (MyException e){
             throw e;
         }catch (Exception e){
             e.printStackTrace();
-            throw new OrderException("商品获取失败。",632);
+            throw new MyException("商品获取失败。",632);
         }
 
         return productDTO;

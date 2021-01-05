@@ -27,10 +27,11 @@ public class StatisticController {
     StatisticService statisticService;
 
     @GetMapping("/getTurnover")
-    public Object getCustomers(BigInteger product_id, Timestamp start_time,Timestamp end_time){
+    public Object getCustomers(BigInteger product_id, Long start_time,Long end_time){
         MsgMap msg = new MsgMap();
         try{
-            Turnover turnover = statisticService.getTurnover(product_id,start_time,end_time);
+
+            Turnover turnover = statisticService.getTurnover(product_id,null== start_time?null:new Timestamp(start_time),null== end_time?null:new Timestamp(end_time));
             msg.put("turnover",turnover);
 
             msg.setMeta("查询成功。",200);

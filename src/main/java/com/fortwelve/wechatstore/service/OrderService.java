@@ -3,7 +3,7 @@ package com.fortwelve.wechatstore.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fortwelve.wechatstore.pojo.OrderDetail;
 import com.fortwelve.wechatstore.pojo.OrderInfo;
-import com.fortwelve.wechatstore.util.OrderException;
+import com.fortwelve.wechatstore.component.MyException;
 
 import java.math.BigInteger;
 import java.util.List;
@@ -32,19 +32,19 @@ public interface OrderService {
      * 创建订单，并扣除相关商品库存
      * @param orderInfo 订单主要信息
      * @param orderDetails 订单商品详细信息，可以包括多个商品
-     * @throws OrderException
+     * @throws MyException
      * @throws JsonProcessingException
      */
-    void createOrder(OrderInfo orderInfo,List<OrderDetail> orderDetails) throws OrderException, JsonProcessingException;
+    void createOrder(OrderInfo orderInfo,List<OrderDetail> orderDetails) throws MyException, JsonProcessingException;
 
 
     /**
      * 订单支付
      * @param id 订单id
      * @param customer_id 客户id
-     * @throws OrderException
+     * @throws MyException
      */
-    void payOrderById(BigInteger id,BigInteger customer_id)throws OrderException;
+    void payOrderById(BigInteger id,BigInteger customer_id)throws MyException;
 
     /**
      * 查询该客户所有订单
@@ -70,7 +70,7 @@ public interface OrderService {
      * @param order_id
      * @return
      */
-    void closeOrderById(BigInteger order_id) throws OrderException;
+    void closeOrderById(BigInteger order_id) throws MyException;
 
-    void updateOrderStatus(BigInteger order_id,int status) throws OrderException;
+    void updateOrderStatus(BigInteger order_id,int status) throws MyException;
 }

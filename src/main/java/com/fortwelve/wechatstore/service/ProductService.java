@@ -4,13 +4,11 @@ import com.fortwelve.wechatstore.dto.ProductDTO;
 import com.fortwelve.wechatstore.dto.ProductDetailDTO;
 import com.fortwelve.wechatstore.dto.ProductPropertiesDTO;
 import com.fortwelve.wechatstore.dto.SkuPropertiesDTO;
-import com.fortwelve.wechatstore.pojo.Picture;
 import com.fortwelve.wechatstore.pojo.Product;
 import com.fortwelve.wechatstore.pojo.Sku;
-import com.fortwelve.wechatstore.util.OrderException;
+import com.fortwelve.wechatstore.component.MyException;
 
 import java.math.BigInteger;
-import java.util.LinkedList;
 import java.util.List;
 
 public interface ProductService {
@@ -64,7 +62,7 @@ public interface ProductService {
      * @param product_id
      * @return ProductDetailDTO
      */
-    ProductDetailDTO getProductDetail(BigInteger product_id) throws OrderException;
+    ProductDetailDTO getProductDetail(BigInteger product_id) throws MyException;
 
     /**
      * 获取图片URL列表
@@ -76,16 +74,16 @@ public interface ProductService {
     /**
      * 添加商品
      * @param productDTO
-     * @throws OrderException
+     * @throws MyException
      */
-    void addProduct(ProductDTO productDTO) throws OrderException;
+    void addProduct(ProductDTO productDTO) throws MyException;
 
     /**
      * 修改商品
      * @param productDTO
-     * @throws OrderException
+     * @throws MyException
      */
-    void updateProduct(ProductDTO productDTO) throws OrderException;
+    void updateProduct(ProductDTO productDTO) throws MyException;
 
-    ProductDTO getProductByProduct_id(BigInteger product_id) throws OrderException;
+    ProductDTO getProductByProduct_id(BigInteger product_id) throws MyException;
 }

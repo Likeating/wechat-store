@@ -19,26 +19,26 @@ public class HomeController {
         Map<String,Object> meta = new HashMap<>();
         List<Object> msg = new ArrayList<>();
 
-        msgbody.put("image_src","https://s3.ax1x.com/2020/12/03/D7yH2V");
+        msgbody.put("image_src","https://s3.ax1x.com/2020/12/03/D7yH2V.jpg");
         msgbody.put("open_type","navigate");
-        msgbody.put("goods_id",129);
-        msgbody.put("navigator_url","/pages/goods_detail/index?goods_id=129");
+        msgbody.put("goods_id",1);
+        msgbody.put("navigator_url","/pages/goods_list/index?cid=1");
         msg.add(msgbody);
 
         Map<String,Object> msgbody2 = new HashMap<>();
 
         msgbody2.put("image_src","https://s3.ax1x.com/2020/12/03/D7ybvT.jpg");
         msgbody2.put("open_type","navigate");
-        msgbody2.put("goods_id",130);
-        msgbody2.put("navigator_url","/pages/goods_detail/index?goods_id=130");
+        msgbody2.put("goods_id",9);
+        msgbody2.put("navigator_url","/pages/goods_detail/index?goods_id=9");
         msg.add(msgbody2);
 
         Map<String,Object> msgbody3 = new HashMap<>();
 
         msgbody3.put("image_src","https://s3.ax1x.com/2020/12/03/D7yLKU.jpg");
         msgbody3.put("open_type","navigate");
-        msgbody3.put("goods_id",131);
-        msgbody3.put("navigator_url","/pages/goods_detail/index?goods_id=131");
+        msgbody3.put("goods_id",4);
+        msgbody3.put("navigator_url","/pages/goods_detail/index?goods_id=4");
         msg.add(msgbody3);
 
         meta.put("msg","获取成功");
@@ -71,31 +71,31 @@ public class HomeController {
         product1.put("image_src","https://api-hmugo-web.itheima.net/pyg/pic_floor01_1@2x.png");
         product1.put("image_width",232);
         product1.put("open_type","navigate");
-        product1.put("navigator_url","/pages/goods_list/index?query=服饰");
+        product1.put("navigator_url","/pages/goods_list/index?cid=4");
 
         product2.put("name","春季热门");
         product2.put("image_src","https://api-hmugo-web.itheima.net/pyg/pic_floor01_2@2x.png");
         product2.put("image_width",232);
         product2.put("open_type","navigate");
-        product2.put("navigator_url","/pages/goods_list/index?query=热");
+        product2.put("navigator_url","/pages/goods_list/index?cid=5");
 
         product3.put("name","爆款清仓");
         product3.put("image_src","https://api-hmugo-web.itheima.net/pyg/pic_floor01_3@2x.png");
         product3.put("image_width",233);
         product3.put("open_type","navigate");
-        product3.put("navigator_url","/pages/goods_list/index?query=爆款");
+        product3.put("navigator_url","/pages/goods_list/index?cid=6");
 
         product4.put("name","倒春寒");
         product4.put("image_src","https://api-hmugo-web.itheima.net/pyg/pic_floor01_4@2x.png");
         product4.put("image_width",233);
         product4.put("open_type","navigate");
-        product4.put("navigator_url","/pages/goods_list/index?query=春季");
+        product4.put("navigator_url","/pages/goods_list/index?cid=7");
 
         product5.put("name","怦然心动");
         product5.put("image_src","https://api-hmugo-web.itheima.net/pyg/pic_floor01_5@2x.png");
         product5.put("image_width",233);
         product5.put("open_type","navigate");
-        product5.put("navigator_url","/pages/goods_list/index?query=心动");
+        product5.put("navigator_url","/pages/goods_list/index?cid=9");
 
         product_list.add(product1);
         product_list.add(product2);

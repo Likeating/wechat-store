@@ -8,12 +8,11 @@ import com.fortwelve.wechatstore.pojo.OrderDetail;
 import com.fortwelve.wechatstore.pojo.OrderInfo;
 import com.fortwelve.wechatstore.service.OrderService;
 import com.fortwelve.wechatstore.util.JWTUtils;
-import com.fortwelve.wechatstore.util.OrderException;
+import com.fortwelve.wechatstore.component.MyException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -90,7 +89,7 @@ public class OrderController {
             msg.put("pay_status",orderInfo.getOrder_status());
 
             msg.setMeta("创建成功。",200);
-        }catch (OrderException e){
+        }catch (MyException e){
             msg.setMeta(e.getMessage(),e.getCode());
         }catch (Exception e){
             e.printStackTrace();
@@ -123,7 +122,7 @@ public class OrderController {
 
             msg.put("orderInfo",orderInfo);
             msg.setMeta("支付成功。",200);
-        }catch (OrderException e){
+        }catch (MyException e){
             msg.setMeta(e.getMessage(),e.getCode());
         }catch (Exception e){
             e.printStackTrace();

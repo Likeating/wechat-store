@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fortwelve.wechatstore.dao.*;
 import com.fortwelve.wechatstore.pojo.*;
 import com.fortwelve.wechatstore.service.OrderService;
-import com.fortwelve.wechatstore.util.OrderException;
+import com.fortwelve.wechatstore.component.MyException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,7 +70,7 @@ public class OrderServiceImpl implements OrderService {
 //    }
 
     @Override
-    public void createOrder(OrderInfo orderInfo,List<OrderDetail> orderDetails) throws OrderException, JsonProcessingException {
+    public void createOrder(OrderInfo orderInfo,List<OrderDetail> orderDetails) throws MyException, JsonProcessingException {
         //价格计算并检查库存
         Sku sku;
         BigDecimal totalPrice=new BigDecimal("0");
@@ -80,17 +80,17 @@ public class OrderServiceImpl implements OrderService {
         for(OrderDetail orderDetail : orderDetails){
 
             if(null == orderDetail.getSku_id() || orderDetail.getNum()<=0){
-                throw new OrderException("参数不正确。",701);
+                throw new MyException("参数不正确。",701);
             }
             sku = skuMapper.getSkuById(orderDetail.getSku_id());
             Product product = productMapper.getProductById(sku.getProduct_id());
 
             if(null == sku || null == product){
-                throw new OrderException("商品不存在。",608);
+                throw new MyException("商品不存在。",608);
             }
 
             if(null != product.getDelete_time() && System.currentTimeMillis()>product.getDelete_time().getTime()){
-                throw new OrderException("商品已下架。",607);
+                throw new MyException("商品已下架。",607);
             }
             //填写详细订单的商品属性 start
             String properties = sku.getProperties();
@@ -112,7 +112,7 @@ public class OrderServiceImpl implements OrderService {
             orderDetail.setPicture(pictureMapper.getPictureById(sku.getPicture_id()).getUrl());
 
             if(sku.getStock()<orderDetail.getNum()){
-                throw new OrderException("库存不足。",606);
+                throw new MyException("库存不足。",606);
             }
             //减少库存
             sku.setStock(sku.getStock()-orderDetail.getNum());
@@ -135,14 +135,14 @@ public class OrderServiceImpl implements OrderService {
         //创建订单主信息
 
         if(0 == orderInfoMapper.addOrderInfo(orderInfo)){
-            throw new OrderException("订单操作失败。",612);
+            throw new MyException("订单操作失败。",612);
         }
         BigInteger order_id = orderInfo.getOrder_id();
 
         for(OrderDetail orderDetail : orderDetails){
             orderDetail.setOrder_id(order_id);
             if(0 == orderDetailMapper.addOrderDetail(orderDetail)){
-                throw new OrderException("订单操作失败。",612);
+                throw new MyException("订单操作失败。",612);
             }
         }
 
@@ -150,20 +150,20 @@ public class OrderServiceImpl implements OrderService {
 
 
     @Override
-    public void payOrderById(BigInteger id,BigInteger customer_id) throws OrderException {
+    public void payOrderById(BigInteger id,BigInteger customer_id) throws MyException {
         OrderInfo orderInfo = orderInfoMapper.getOrderInfoById(id);
         if (null == orderInfo){
-            throw new OrderException("编号为："+id+"的订单不存在。",609);
+            throw new MyException("编号为："+id+"的订单不存在。",609);
         }
         if (!orderInfo.getCustomer_id().equals(customer_id)){
-            throw new OrderException("无权操作订单。",611);
+            throw new MyException("无权操作订单。",611);
         }
         if(0 != orderInfo.getOrder_status()){
-            throw new OrderException("订单状态出错。",610);
+            throw new MyException("订单状态出错。",610);
         }
         orderInfo.setOrder_status(1);
         if(0 == orderInfoMapper.updateOrderInfo(orderInfo)){
-            throw new OrderException("订单操作失败。",612);
+            throw new MyException("订单操作失败。",612);
         }
     }
 
@@ -178,18 +178,18 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public void closeOrderById(BigInteger order_id) throws OrderException{
+    public void closeOrderById(BigInteger order_id) throws MyException {
         OrderInfo orderInfo = orderInfoMapper.getOrderInfoById(order_id);
 
         if(null == orderInfo){
-            throw new OrderException("订单不存在。",609);
+            throw new MyException("订单不存在。",609);
         }
         if(orderInfo.getOrder_status()!=0){
-            throw new OrderException("订单状态出错。",610);
+            throw new MyException("订单状态出错。",610);
         }
         orderInfo.setOrder_status(4);
         if(orderInfoMapper.updateOrderInfo(orderInfo)==0){
-            throw new OrderException("订单操作失败。",612);
+            throw new MyException("订单操作失败。",612);
         }
 
         List<OrderDetail> orderDetailList = orderDetailMapper.getAllOrderDetailByOrder_id(order_id);
@@ -214,11 +214,11 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public void updateOrderStatus(BigInteger order_id, int status) throws OrderException {
+    public void updateOrderStatus(BigInteger order_id, int status) throws MyException {
         OrderInfo orderInfo = orderInfoMapper.getOrderInfoById(order_id);
         orderInfo.setOrder_status(status);
         if(0 == orderInfoMapper.updateOrderInfo(orderInfo)){
-            throw new OrderException("订单操作失败。",612);
+            throw new MyException("订单操作失败。",612);
         }
     }
 }
